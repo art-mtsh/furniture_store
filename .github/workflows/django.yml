@@ -62,7 +62,7 @@ jobs:
       #   with:
       #     push: true
       #     tags: artmtsh/store_backend:latest
-      #     context: .  # Specify the context directory containing dockerfile.txt
+      #     context: .  # Specify the context directory containing Dockerfile.txt
       
       - name: Build and push
         run: |
