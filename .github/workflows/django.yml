@@ -1,0 +1,31 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: |
+        docker build -t store_backend .
+        docker tag artmtsh/store_backend:latest artmtsh/store_backend:latest
+        docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_SECRET }}
+        docker push artmtsh/store_backend:latest
+
+    # - name: Deploy to EC2
+    #   uses: appleboy/scp-action@master
+    #   with:
+    #     host: ${{ secrets.EC2_HOST }}
+    #     username: ${{ secrets.EC2_USERNAME }}
+    #     key: ${{ secrets.EC2_PRIVATE_KEY }}
+    #     source: docker-compose.yml
+    #     target: /backend/docker-compose.yml
+
