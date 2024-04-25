@@ -42,20 +42,20 @@ jobs:
     #     pytest
     #   shell: bash
 
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_SECRET }}
+#  docker:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v3
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v3
+#
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+#          password: ${{ secrets.DOCKER_HUB_SECRET }}
 
       # - name: Build and push
       #   uses: docker/build-push-action@v5
@@ -64,12 +64,32 @@ jobs:
       #     tags: artmtsh/store_backend:latest
       #     context: .  # Specify the context directory containing Dockerfile.txt
       
-      - name: Build and push
-        run: |
-          docker build .
-          docker tag artmtsh/store_backend:latest artmtsh/store_backend:latest
-          # docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_SECRET }}
-          docker push artmtsh/store_backend:latest
+#      - name: Build and push
+#        run: |
+#          docker build .
+#          docker tag artmtsh/store_backend:latest artmtsh/store_backend:latest
+#          # docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_SECRET }}
+#          docker push artmtsh/store_backend:latest
 
         
-        
+# ------------------
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_SECRET }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: artmtsh/store_backend:latest
