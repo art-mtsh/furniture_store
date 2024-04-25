@@ -15,17 +15,17 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t your-django-app .
-        docker tag your-django-app:latest your-registry/your-django-app:latest
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker push your-registry/your-django-app:latest
+        docker build -t store_backend .
+        docker tag artmtsh/store_backend:latest artmtsh/store_backend:latest
+        docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_SECRET }}
+        docker push artmtsh/store_backend:latest
 
-    - name: Deploy to EC2
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_PRIVATE_KEY }}
-        source: docker-compose.yml
-        target: /path/to/your/project/docker-compose.yml
+    # - name: Deploy to EC2
+    #   uses: appleboy/scp-action@master
+    #   with:
+    #     host: ${{ secrets.EC2_HOST }}
+    #     username: ${{ secrets.EC2_USERNAME }}
+    #     key: ${{ secrets.EC2_PRIVATE_KEY }}
+    #     source: docker-compose.yml
+    #     target: /backend/docker-compose.yml
 
