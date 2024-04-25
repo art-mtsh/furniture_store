@@ -14,4 +14,4 @@ RUN pip install -r backend/requirements.txt
 EXPOSE 8000
 
 # Run the Django development server
-CMD ["python", "StoreVantage/manage.py", "runserver", "0.0.0.0:8000", "--noreload"]
+CMD ["python", "backend/manage.py", "runserver", "0.0.0.0:8000", "--noreload"]
