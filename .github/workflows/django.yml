@@ -66,7 +66,7 @@ jobs:
       
       - name: Build and push
         run: |
-          docker build -t store_backend -f ./backend .
+          docker build -t store_backend -f ./backend/dockerfile.txt
           docker tag artmtsh/store_backend:latest artmtsh/store_backend:latest
           # docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_SECRET }}
           docker push artmtsh/store_backend:latest
