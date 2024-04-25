@@ -57,12 +57,19 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_SECRET }}
 
+      # - name: Build and push
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     push: true
+      #     tags: artmtsh/store_backend:latest
+      #     context: .  # Specify the context directory containing Dockerfile
+      
       - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: artmtsh/store_backend:latest
-          context: .  # Specify the context directory containing Dockerfile
+        run: |
+          docker build -t store_backend -f backend .
+          docker tag artmtsh/store_backend:latest artmtsh/store_backend:latest
+          # docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_SECRET }}
+          docker push your-registry/your-django-app:latest
 
         
         
