@@ -64,7 +64,6 @@ jobs:
           push: true
           tags: artmtsh/store_backend:latest
 
-
   deploy:
     needs: docker
     runs-on: self-hosted
