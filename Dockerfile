@@ -1,8 +1,11 @@
 # Use an official Python runtime as a base image
 FROM python:alpine
 
-# # lib for installing pcycorg
-RUN apk add --update libpq-dev python3-dev
+# Install build dependencies
+RUN apk add --no-cache gcc musl-dev postgresql-dev
+
+# Install psycopg2
+RUN pip install psycopg2
 
 # Copy the entire project directory into the container
 COPY . app
