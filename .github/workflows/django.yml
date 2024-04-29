@@ -36,10 +36,19 @@ jobs:
           flake8 --exclude=venv/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         shell: bash
 
+#      - name: Test with pytest
+#        run: |
+#          cd backend
+#          pytest --ds=backend.settings
+#        shell: bash
+
+      - name: Set DJANGO_SETTINGS_MODULE
+        run: echo "export DJANGO_SETTINGS_MODULE=backend.settings" >> $GITHUB_ENV
+
       - name: Test with pytest
         run: |
           cd backend
-          pytest --ds=backend.settings
+          pytest
         shell: bash
 
   docker:
