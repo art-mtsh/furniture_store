@@ -181,7 +181,7 @@ class ItemMaterial(models.Model):
         ordering = ['title']
 
 
-class Photos(models.Model):
+class ItemPhoto(models.Model):
     """
     Фотографії товару.
     """
@@ -202,7 +202,7 @@ def validate_even(value):
         )
 
 
-class Reviews(models.Model):
+class ItemReview(models.Model):
     """
     Відгуки про товар.
     """

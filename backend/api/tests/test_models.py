@@ -139,7 +139,7 @@ def test_items_str_method():
 # @pytest.mark.django_db
 # def test_photos_creation():
 #     item = Items.objects.create(title="Test Item", article_code=12345, price=100.0, upholstery_material='test', upholstery_capacity=100)
-#     photo = Photos.objects.create(photo="test.jpg", item=item)
+#     photo = ItemPhoto.objects.create(photo="test.jpg", item=item)
 #     assert photo.photo == "test.jpg"
 #     assert photo.item == item
 #

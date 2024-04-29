@@ -13,8 +13,10 @@ def set_environment():
 
     if platform.node() == "DESKTOP-5PMV5U1":
         os.environ['ENVIRONMENT'] = 'development'
+        os.environ['IP_ADDRESS'] = 'localhost:8000'
     else:
         os.environ['ENVIRONMENT'] = 'production'
+        os.environ['IP_ADDRESS'] = '0.0.0.0:8000'
 
 
 def main():
@@ -33,7 +35,8 @@ def main():
     # виконання міграцій та запуску сервера
     call_command("makemigrations")
     call_command("migrate")
-    call_command("runserver", ["0.0.0.0:8000", "--noreload"])
+    IP_ADDRESS = os.environ.get('IP_ADDRESS', '127.0.0.1:8000')
+    call_command("runserver", [IP_ADDRESS, "--noreload"])
 
 
 if __name__ == "__main__":
