@@ -3,7 +3,7 @@ FROM python:alpine
 
 # lib for installing pcycorg
 RUN apk update
-RUN apk install -y libpq-dev
+RUN apk add postgresql-dev
 
 # Copy the entire project directory into the container
 COPY . app
