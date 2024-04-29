@@ -58,7 +58,7 @@ class Manufacturer(models.Model):
     """
 
     title = models.CharField(max_length=150, db_index=True, verbose_name="Виробник")
-    about = models.TextField(blank=True, verbose_name='Інформація про виробника')
+    about = models.TextField(blank=True, verbose_name='Інформація')
 
     def __str__(self):
         return self.title

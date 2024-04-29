@@ -15,20 +15,21 @@ class ItemCategorySerializer(serializers.ModelSerializer):
 
 
 class ManufacturerSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = RoomType
+        model = Manufacturer
         fields = ['title', 'about']
 
 
 class ItemCollectionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RoomType
+        model = ItemCollection
         fields = ['title', 'manufacturer']
 
 
 class ItemsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RoomType
+        model = Items
         fields = ['title',
                   'article_code',
                   'price',
@@ -52,23 +53,23 @@ class ItemsSerializer(serializers.ModelSerializer):
 
 class ItemColourSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RoomType
+        model = ItemColour
         fields = ['title', 'item', 'photo']
 
 
 class ItemMaterialSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RoomType
+        model = ItemMaterial
         fields = ['title', 'item', 'photo']
 
 
 class ItemPhotoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RoomType
+        model = ItemPhoto
         fields = ['photo', 'item']
 
 
 class ItemReviewSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RoomType
+        model = ItemReview
         fields = ['item', 'first_name', 'second_name', 'rating', 'review_usefulness_counter']
