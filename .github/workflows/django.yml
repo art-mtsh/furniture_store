@@ -42,13 +42,13 @@ jobs:
 #          pytest --ds=backend.settings
 #        shell: bash
 
-      - name: Set DJANGO_SETTINGS_MODULE
-        run: echo "export DJANGO_SETTINGS_MODULE=backend.settings" >> $GITHUB_ENV
+#      - name: Set DJANGO_SETTINGS_MODULE
+#        run: echo "export DJANGO_SETTINGS_MODULE=backend.settings" >> $GITHUB_ENV
 
       - name: Test with pytest
         run: |
           cd backend
-          pytest
+          DJANGO_SETTINGS_MODULE=backend.settings pytest
         shell: bash
 
   docker:
