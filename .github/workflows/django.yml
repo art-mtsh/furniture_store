@@ -77,5 +77,14 @@ jobs:
       - name: Pull latest image from Docker Hub
         run: docker pull artmtsh/store_backend:latest
 
+#      - name: Run new container
+#        run: docker run -d -p 8000:8000 --name store_backend_container artmtsh/store_backend:latest
+
+      - name: Make migrations
+        run: docker run --rm -e ENVIRONMENT=production artmtsh/store_backend:latest python manage.py makemigrations
+
+      - name: Run migrations
+        run: docker run --rm -e ENVIRONMENT=production artmtsh/store_backend:latest python manage.py migrate
+
       - name: Run new container
-        run: docker run -d -p 8000:8000 --name store_backend_container artmtsh/store_backend:latest
+        run: docker run -d -p 8000:8000 --name store_backend_container -e ENVIRONMENT=production artmtsh/store_backend:latest
