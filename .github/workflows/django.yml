@@ -68,10 +68,11 @@ jobs:
     runs-on: self-hosted
     needs: docker
     steps:
-      - name: Stop and remove existing container (if any)
+      - name: Stop and remove containers and images (if any)
         run: |
           docker stop store_backend_container || true
           docker rm store_backend_container || true
+          docker rmi -f $(docker images -aq) || true
         continue-on-error: true
 
       - name: Pull latest image from Docker Hub
