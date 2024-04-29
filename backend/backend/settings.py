@@ -95,7 +95,6 @@ if ENVIRONMENT == 'development':
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
 elif ENVIRONMENT == 'production':
     DATABASES = {
         'default': {
