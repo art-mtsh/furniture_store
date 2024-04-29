@@ -3,22 +3,6 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
-# class TestTextModel(models.Model):
-#     """
-#     Тестова модель
-#     """
-#
-#     test_id = models.AutoField(primary_key=True)
-#     random_subject = models.CharField(max_length=50)
-#     random_text = models.TextField(max_length=50)
-#
-#     class Meta:
-#         db_table = 'tests'
-#
-#     def __str__(self):
-#         return f"Test ID: {self.test_id}, Subject: {self.random_subject}, Text: {self.random_text}"
-
-
 class RoomType(models.Model):
     """
     Тип кімнати:
@@ -53,7 +37,7 @@ class ItemCategory(models.Model):
     """
 
     title = models.CharField(max_length=150, db_index=True, verbose_name="Категорія")
-    room = models.ForeignKey(RoomType, verbose_name='Тип кімнати', on_delete=models.PROTECT, null=True)
+    room = models.ForeignKey(RoomType, verbose_name='Тип кімнати', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.title
@@ -112,8 +96,8 @@ class Items(models.Model):
     title = models.CharField(max_length=150, verbose_name='Назва товару', blank=False)
     article_code = models.IntegerField(verbose_name='Артикул', unique=True, blank=False)
     price = models.FloatField(verbose_name='Ціна, ГРН')
-    upholstery_material = models.CharField(max_length=150, verbose_name='Наповнення',blank=True, null=True)
-    upholstery_capacity = models.IntegerField(verbose_name='Щільність набивки',blank=True, null=True)
+    upholstery_material = models.CharField(max_length=150, verbose_name='Наповнення', blank=True, null=True)
+    upholstery_capacity = models.IntegerField(verbose_name='Щільність набивки', blank=True, null=True)
     d_length = models.IntegerField(verbose_name='Загальна довжина', blank=True)
     d_width = models.IntegerField(verbose_name='Загальна ширина', blank=True)
     d_height = models.IntegerField(verbose_name='Загальна висота', blank=True)
