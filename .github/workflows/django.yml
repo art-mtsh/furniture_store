@@ -70,8 +70,8 @@ jobs:
     steps:
       - name: Stop and remove containers and images (if any)
         run: |
-          docker stop store_backend_container || true
-          docker rm store_backend_container || true
+          docker stop $(docker ps -a -q) || true
+          docker remove $(docker ps -a -q) || true
           docker rmi -f $(docker images -aq) || true
         continue-on-error: true
 
