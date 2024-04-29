@@ -39,7 +39,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          cd Backend
+          cd backend
           pytest
         shell: bash
 
