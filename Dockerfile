@@ -2,7 +2,7 @@
 FROM python:alpine
 
 # # lib for installing pcycorg
-RUN apt-get install libpq-dev python-dev
+RUN RUN apk add --update libpq-dev python-dev
 
 # Copy the entire project directory into the container
 COPY . app
