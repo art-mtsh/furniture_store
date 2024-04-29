@@ -36,15 +36,6 @@ jobs:
           flake8 --exclude=venv/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         shell: bash
 
-#      - name: Test with pytest
-#        run: |
-#          cd backend
-#          pytest --ds=backend.settings
-#        shell: bash
-
-#      - name: Set DJANGO_SETTINGS_MODULE
-#        run: echo "export DJANGO_SETTINGS_MODULE=backend.settings" >> $GITHUB_ENV
-
       - name: Test with pytest
         run: |
           cd backend
@@ -55,11 +46,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v3
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
