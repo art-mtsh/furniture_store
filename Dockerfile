@@ -1,8 +1,8 @@
 # Use an official Python runtime as a base image
 FROM python:alpine
 
-# lib for installing pcycorg
-RUN apt install libpq-dev gcc
+# # lib for installing pcycorg
+# RUN apt install libpq-dev gcc
 
 # Copy the entire project directory into the container
 COPY . app
