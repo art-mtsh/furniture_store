@@ -1,6 +1,7 @@
 from django.urls import path
-from . import views
+from .views import button_view #, TestTextModelListCreate
 
 urlpatterns = [
-    path('button/', views.button_view, name='button_view'),
+    path('button/', button_view, name='button_view'),
+    # path('text/', TestTextModelListCreate.as_view(), name='text'),
 ]
