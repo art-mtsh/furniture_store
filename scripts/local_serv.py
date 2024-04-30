@@ -7,3 +7,7 @@ def run_local_server():
     sqlite_migration()
     # запустити сервер
     call_command("runserver", ["127.0.0.1:8000", "--noreload"])
+
+
+if __name__ == "__main__":
+    run_local_server()

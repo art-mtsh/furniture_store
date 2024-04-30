@@ -17,4 +17,8 @@ def sqlite_migration():
     call_command("makemigrations")
     call_command("migrate")
 
-    print(f"Migrated with {os.environ['ENVIRONMENT']} environment!")
+    # print(f"Migrated with {os.environ['ENVIRONMENT']} environment!")
+
+
+if __name__ == "__main__":
+    sqlite_migration()

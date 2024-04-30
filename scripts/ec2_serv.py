@@ -7,3 +7,7 @@ def run_prod_server():
     postgres_migration()
     # запустити сервер
     call_command("runserver", ["0.0.0.0:8000", "--noreload"])
+
+
+if __name__ == "__main__":
+    run_prod_server()

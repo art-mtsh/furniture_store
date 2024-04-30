@@ -23,7 +23,6 @@ def set_environment():
 
 def main():
 
-
     # встановити перемінну оточення
     set_environment()
 
@@ -39,6 +38,7 @@ def main():
     # виконання міграцій та запуску сервера
     call_command("makemigrations")
     call_command("migrate")
+
     IP_ADDRESS = os.environ.get('IP_ADDRESS', '127.0.0.1:8000')
     call_command("runserver", [IP_ADDRESS, "--noreload"])
 
