@@ -96,6 +96,7 @@ class Items(models.Model):
     title = models.CharField(max_length=150, verbose_name='Назва товару', blank=False)
     article_code = models.IntegerField(verbose_name='Артикул', unique=True, blank=False)
     price = models.FloatField(verbose_name='Ціна, ГРН')
+    description = models.TextField(blank=True, verbose_name='Опис товару')
     upholstery_material = models.CharField(max_length=150, verbose_name='Наповнення', blank=True, null=True)
     upholstery_capacity = models.IntegerField(verbose_name='Щільність набивки', blank=True, null=True)
     d_length = models.IntegerField(verbose_name='Загальна довжина', blank=True)
@@ -160,8 +161,8 @@ class ItemMaterial(models.Model):
 
     class Meta:
         db_table = 'api_material'
-        verbose_name = "Дерево"
-        verbose_name_plural = "Дерево"
+        verbose_name = "Матеріал"
+        verbose_name_plural = "Матеріали"
         ordering = ['title']
 
 
@@ -194,11 +195,12 @@ class ItemReview(models.Model):
     item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.PROTECT, null=True, related_name='get_news')
     first_name = models.CharField(max_length=150, verbose_name="Ім'я", blank=False)
     second_name = models.CharField(max_length=150, verbose_name='Прізвище', blank=False)
+    review = models.TextField(blank=True, verbose_name='Відгук')
     rating = models.IntegerField(verbose_name='Оцінка товару', blank=False, validators=[validate_even])
     review_usefulness_counter = models.IntegerField(verbose_name='Корисність відгуку', default=0)
 
-    # def __str__(self):
-    #     return self.item.title
+    def __str__(self):
+        return self.item.title
 
     class Meta:
         db_table = 'api_review'
