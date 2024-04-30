@@ -20,5 +20,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8000
 
 # Run the Django development server
-# CMD ["python", "backend/manage.py", "runserver", "0.0.0.0:8000", "--noreload"]
-CMD ["python", "backend/run_server.py"]
+CMD ["python", "scripts/ec2_serv.py"]

@@ -22,6 +22,8 @@ def set_environment():
 
 
 def main():
+
+
     # встановити перемінну оточення
     set_environment()
 
