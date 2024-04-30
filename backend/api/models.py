@@ -159,7 +159,7 @@ class ItemMaterial(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'api_woods'
+        db_table = 'api_material'
         verbose_name = "Дерево"
         verbose_name_plural = "Дерево"
         ordering = ['title']
@@ -173,7 +173,7 @@ class ItemPhoto(models.Model):
     item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE, null=True)  # товар
 
     class Meta:
-        db_table = 'api_photos'
+        db_table = 'api_photo'
         verbose_name = "Фото"
         verbose_name_plural = "Фото"
         ordering = ['item']
@@ -201,7 +201,7 @@ class ItemReview(models.Model):
     #     return self.item.title
 
     class Meta:
-        db_table = 'api_reviews'
+        db_table = 'api_review'
         verbose_name = "Відгук"
         verbose_name_plural = "Відгуки"
         ordering = ['item']
