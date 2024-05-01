@@ -95,7 +95,7 @@ class ItemMaterialAdmin(admin.ModelAdmin):
 
 class ItemPhotoAdmin(admin.ModelAdmin):
     list_display = ('id', 'photo', 'item',)
-    list_display_links = ('title',)
+    list_display_links = ('item',)
     search_fields = ('item',)
     # list_editable = ('item',)
     list_filter = ('item',)
