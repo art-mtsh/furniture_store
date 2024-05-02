@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -155,6 +156,37 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'backend.utils.custom_exception_handler',
+    # 'EXCEPTION_HANDLER': 'backend.utils.custom_exception_handler',
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    'formatters': {
+        'custom_format': {
+            'format': '886c2329-fe6c-4529-a321-e65c6742dd94:%(message)s'
+        },
+    },
+
+    "handlers": {
+        "sematext": {
+            "level": "DEBUG",
+            "class": "logging.handlers.SysLogHandler",
+            "address": ("logsene-syslog-receiver.eu.sematext.com", 514),
+            "formatter": "custom_format"
+        },
+    },
+
+    "loggers": {
+        "HelloLogs": {
+            'level': 'DEBUG',
+            'handlers': ['sematext'],  # Add the file handler here
+            'propagate': False,
+        }
+    },
+}
+
+# RATELIMIT_STATUS_CODE = 429
