@@ -14,6 +14,7 @@ from sematext import log_engine
 def button_view(request):
     return JsonResponse({'message': 'Hello World'})
 
+# 1234
 
 class RoomTypeView(generics.ListCreateAPIView):
     queryset = RoomType.objects.all()
