@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -160,7 +159,6 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -189,4 +187,6 @@ LOGGING = {
     },
 }
 
-# RATELIMIT_STATUS_CODE = 429
+HYPERDX_API_KEY = 'bd4554ec-86a5-4390-ab48-1dc4edcce312'
+OTEL_SERVICE_NAME = 'backend'
+HYPERDX_ENABLE_ADVANCED_NETWORK_CAPTURE=1
