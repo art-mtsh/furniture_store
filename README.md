@@ -1,0 +1,1 @@
+ПИШИ COMMIT MESSAGES НОРМАЛЬНО!
