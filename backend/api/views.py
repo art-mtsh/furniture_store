@@ -10,7 +10,7 @@ from brake.decorators import ratelimit
 from sematext import log_engine
 
 
-@ratelimit(block=False, rate='5/m')
+@ratelimit(block=True, rate='5/m')
 def button_view(request):
     return JsonResponse({'message': 'Hello World'})
 
