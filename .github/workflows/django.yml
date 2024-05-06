@@ -1,8 +1,6 @@
 name: EC2 Python APP
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
