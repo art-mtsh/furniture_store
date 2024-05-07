@@ -17,8 +17,6 @@ def button_view(request):
 class RoomTypeView(generics.ListCreateAPIView):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
-    permission_classes = [IsAuthenticated]
-
     try:
         @method_decorator(ratelimit(block=False, rate='5/m'))
         def dispatch(self, request, *args, **kwargs):
