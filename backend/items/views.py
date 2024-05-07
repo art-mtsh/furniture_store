@@ -1,10 +1,10 @@
 from django.http import JsonResponse, HttpResponse
-from .serializers import *
-
 from django.utils.decorators import method_decorator
 from rest_framework import generics
-from brake.decorators import ratelimit
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from .serializers import *
 
+from brake.decorators import ratelimit
 from sematext import log_engine
 
 
@@ -17,6 +17,7 @@ def button_view(request):
 class RoomTypeView(generics.ListCreateAPIView):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
+    permission_classes = [IsAuthenticated]
 
     try:
         @method_decorator(ratelimit(block=False, rate='5/m'))
