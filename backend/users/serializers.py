@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -17,6 +18,14 @@ class UserSerializer(serializers.ModelSerializer):
             'username': {'required': False},
             'email': {'required': True},
         }
+
+    # якщо settings.AUTH_PASSWORD_VALIDATORS не перевіряє
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except serializers.ValidationError as e:
+            raise serializers.ValidationError(e.messages)
+        return value
 
     # перевантаження методу create, повернення інфо при GET
     def create(self, validated_data):
@@ -38,8 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
-    Клас наслідує TokenObtainPairSerializer
-    та перевантажує метод validate
+    Клас наслідує TokenObtainPairSerializer та перевантажує метод validate
     :return access, refresh
     """
 
@@ -61,6 +69,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # автентифікуємо користувача
         user = authenticate(username=username, password=password)
+        # при невдалій спробі
         if not user:
             raise serializers.ValidationError("Користувача не знайдено!")
 
