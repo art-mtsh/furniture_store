@@ -28,6 +28,9 @@ def main():
     # ініціалізація DJANGO
     django.setup()
     # виконання міграцій та запуску сервера
+    # call_command("migrate", ["items", "--fake"])
+    # call_command("makemigrations", ["items", "--empty"])
+    # call_command("migrate")
     call_command("makemigrations")
     call_command("migrate")
 

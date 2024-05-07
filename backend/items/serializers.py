@@ -42,6 +42,8 @@ class ItemsSerializer(serializers.ModelSerializer):
                   'dimension_in_use_width',
                   'dimension_in_use_height',
                   'counter_claw',
+                  'avaliability',
+                  'in_stock',
                   'manufacturer',
                   'collection',
                   'item_category',

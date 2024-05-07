@@ -18,7 +18,7 @@ class RoomType(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'api_room_type'
+        db_table = 'item_room_type'
         verbose_name = "Тип кімнати"
         verbose_name_plural = "Типи кімнат"
         ordering = ['title']
@@ -43,7 +43,7 @@ class ItemCategory(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'api_item_category'
+        db_table = 'item_category'
         verbose_name = "Категорія об'єкта"
         verbose_name_plural = "Категорії об'єкта"
         ordering = ['title']
@@ -64,7 +64,7 @@ class Manufacturer(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'api_manufacturer'
+        db_table = 'item_manufacturer'
         verbose_name = "Виробник"
         verbose_name_plural = "Виробники"
         ordering = ['title']
@@ -82,7 +82,7 @@ class ItemCollection(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'api_collection'
+        db_table = 'item_collection'
         verbose_name = "Колекція"
         verbose_name_plural = "Колекції"
         ordering = ['title']
@@ -106,6 +106,8 @@ class Items(models.Model):
     dimension_in_use_width = models.IntegerField(verbose_name='Корисна ширина', blank=True)
     dimension_in_use_height = models.IntegerField(verbose_name='Загальна висота', blank=True)
     counter_claw = models.BooleanField(verbose_name='Захист від кігтів', default=False)
+    avaliability = models.BooleanField(verbose_name='В наявності', default=True)
+    in_stock = models.IntegerField(verbose_name='Кількість на складі', default=1)
 
     manufacturer = models.ForeignKey(Manufacturer, verbose_name='Виробник', on_delete=models.SET_NULL, null=True)  # виробник
     collection = models.ForeignKey(ItemCollection, verbose_name='Колекція', on_delete=models.SET_NULL, null=True)  # колекція
@@ -123,7 +125,7 @@ class Items(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'api_items'
+        db_table = 'item_items'
         verbose_name = "Товар"
         verbose_name_plural = "Товари"
         ordering = ['room_type', 'item_category', 'title']
@@ -142,7 +144,7 @@ class ItemColour(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'api_colours'
+        db_table = 'item_colours'
         verbose_name = "Колір"
         verbose_name_plural = "Кольори"
         ordering = ['title']
@@ -160,7 +162,7 @@ class ItemMaterial(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'api_material'
+        db_table = 'item_material'
         verbose_name = "Матеріал"
         verbose_name_plural = "Матеріали"
         ordering = ['title']
@@ -174,7 +176,7 @@ class ItemPhoto(models.Model):
     item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE, null=True)  # товар
 
     class Meta:
-        db_table = 'api_photo'
+        db_table = 'item_photo'
         verbose_name = "Фото"
         verbose_name_plural = "Фото"
         ordering = ['item']
@@ -203,7 +205,7 @@ class ItemReview(models.Model):
         return self.item.title
 
     class Meta:
-        db_table = 'api_review'
+        db_table = 'item_review'
         verbose_name = "Відгук"
         verbose_name_plural = "Відгуки"
         ordering = ['item']
