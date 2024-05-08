@@ -8,7 +8,9 @@ from brake.decorators import ratelimit
 from sematext import log_engine
 
 
-@ratelimit(block=True, rate='5/m')
+ratelimit_m = '10/m'
+
+@ratelimit(block=True, rate=ratelimit_m)
 def button_view(request):
     return JsonResponse({'message': 'Hello World'})
 
@@ -18,7 +20,7 @@ class RoomTypeView(generics.ListCreateAPIView):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
     try:
-        @method_decorator(ratelimit(block=False, rate='5/m'))
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
             log_engine.info('Request to RoomTypeView')
             if getattr(request, 'limits', {}):
@@ -34,7 +36,7 @@ class ItemCategoryView(generics.ListCreateAPIView):
     serializer_class = ItemCategorySerializer
 
     try:
-        @method_decorator(ratelimit(block=False, rate='5/m'))
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
             log_engine.info('Request to ItemCategoryView')
             if getattr(request, 'limits', {}):
@@ -50,7 +52,7 @@ class ManufacturerView(generics.ListCreateAPIView):
     serializer_class = ManufacturerSerializer
 
     try:
-        @method_decorator(ratelimit(block=False, rate='5/m'))
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
             log_engine.info('Request to ManufacturerView')
             if getattr(request, 'limits', {}):
@@ -66,7 +68,7 @@ class CollectionView(generics.ListCreateAPIView):
     serializer_class = ItemCollectionSerializer
 
     try:
-        @method_decorator(ratelimit(block=False, rate='5/m'))
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
             log_engine.info('Request to CollectionView')
             if getattr(request, 'limits', {}):
@@ -82,7 +84,7 @@ class ItemsView(generics.ListCreateAPIView):
     serializer_class = ItemsSerializer
 
     try:
-        @method_decorator(ratelimit(block=False, rate='5/m'))
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
             log_engine.info('Request to ItemsView')
             if getattr(request, 'limits', {}):
@@ -98,7 +100,7 @@ class ColourView(generics.ListCreateAPIView):
     serializer_class = ItemColourSerializer
 
     try:
-        @method_decorator(ratelimit(block=False, rate='5/m'))
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
             log_engine.info('Request to ColourView')
             if getattr(request, 'limits', {}):
@@ -114,7 +116,7 @@ class MaterialView(generics.ListCreateAPIView):
     serializer_class = ItemMaterialSerializer
 
     try:
-        @method_decorator(ratelimit(block=False, rate='5/m'))
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
             log_engine.info('Request to MaterialView')
             if getattr(request, 'limits', {}):
@@ -130,7 +132,7 @@ class ItemPhotoView(generics.ListCreateAPIView):
     serializer_class = ItemPhotoSerializer
 
     try:
-        @method_decorator(ratelimit(block=False, rate='5/m'))
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
             log_engine.info('Request to ItemPhotoView')
             if getattr(request, 'limits', {}):
@@ -146,7 +148,7 @@ class ItemReviewView(generics.ListCreateAPIView):
     serializer_class = ItemReviewSerializer
 
     try:
-        @method_decorator(ratelimit(block=False, rate='5/m'))
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
             log_engine.info('Request to ItemReviewView')
             if getattr(request, 'limits', {}):

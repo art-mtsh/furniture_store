@@ -36,18 +36,22 @@ class UserSerializer(serializers.ModelSerializer):
             validated_data['username'] = validated_data.get('email')
         # інфо по юзерам доступне в pg:auth_user
 
-        # перевірка чи є такий email
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError("Користувач з таким email вже існує!")
 
-        # Create the user
         user = User.objects.create_user(**validated_data)
         return user
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
+    При реєстрації поле username є необов'язковим. Якщо воно відсутнє username = email.
+
+    Цей клас відповідає за логін і видачу токена сесії. Він перевіряє чи введено email чи username,
+    перевіряє наявність такого користувача і видає JWT токен.
+
     Клас наслідує TokenObtainPairSerializer та перевантажує метод validate
+
     :return access, refresh
     """
 
@@ -55,26 +59,16 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         user_or_email = attrs.get("username")
         password = attrs.get("password")
 
-        # перевіряємо чи використовується email як username
-
-        # якщо поле в форматі email
         if '@' in user_or_email:
-            # отримуємо username через email
             username = User.objects.get(email=user_or_email).username
-
-        # якщо поле в форматі str
         else:
-            # то це і є username
             username = user_or_email
 
-        # автентифікуємо користувача
         user = authenticate(username=username, password=password)
-        # при невдалій спробі
         if not user:
             raise serializers.ValidationError("Користувача не знайдено!")
 
-        # перевизначаємо атрибут username
+        # перевизначаємо атрибут username, бо при логіні по email (якщо username != email) - ми не отримаємо токен
         attrs['username'] = username
-        # валідація, отримання JWT зі старшого класу
         data = super().validate(attrs)
         return data
