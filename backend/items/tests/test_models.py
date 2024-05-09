@@ -1,159 +1,95 @@
 import pytest
+from django.core.exceptions import ValidationError
 from items.models import *
 
 
 @pytest.mark.django_db
-def test_room_type_creation():
-    room_type = RoomType.objects.create(title="Test Room Type")
-    assert room_type.title == "Test Room Type"
+def test_item_room_type():
+    # Create an instance of ItemRoomType
+    item_room_type = ItemRoomType.objects.create(title="Test Room Type")
+    assert str(item_room_type) == "Test Room Type"
 
 
 @pytest.mark.django_db
-def test_room_type_str_method():
-    room_type = RoomType.objects.create(title="Test Room Type")
-    assert str(room_type) == "Test Room Type"
+def test_item_category():
+    # Create an instance of ItemRoomType
+    item_room_type = ItemRoomType.objects.create(title="Test Room Type")
+    # Create an instance of ItemCategory with the created ItemRoomType
+    item_category = ItemCategory.objects.create(title="Test Category", room=item_room_type)
+    assert str(item_category) == "Test Category"
 
 
 @pytest.mark.django_db
-def test_manufacturer_creation():
-    manufacturer = Manufacturer.objects.create(title="Test Manufacturer")
-    assert manufacturer.title == "Test Manufacturer"
+def test_item_manufacturer():
+    # Create an instance of ItemManufacturer
+    item_manufacturer = ItemManufacturer.objects.create(title="Test Manufacturer")
+    assert str(item_manufacturer) == "Test Manufacturer"
 
 
 @pytest.mark.django_db
-def test_manufacturer_str_method():
-    manufacturer = Manufacturer.objects.create(title="Test Manufacturer")
-    assert str(manufacturer) == "Test Manufacturer"
+def test_item_collection():
+    # Create an instance of ItemManufacturer
+    item_manufacturer = ItemManufacturer.objects.create(title="Test Manufacturer")
+    # Create an instance of ItemCollection with the created ItemManufacturer
+    item_collection = ItemCollection.objects.create(title="Test Collection", manufacturer=item_manufacturer)
+    assert str(item_collection) == "Test Collection"
 
 
 @pytest.mark.django_db
-def test_item_category_creation():
-    room_type = RoomType.objects.create(title="Test Room Type")
-    item_category = ItemCategory.objects.create(title="Test Item Category", room=room_type)
-    assert item_category.title == "Test Item Category"
-    assert item_category.room == room_type
-
-
-@pytest.mark.django_db
-def test_item_category_str_method():
-    room_type = RoomType.objects.create(title="Test Room Type")
-    item_category = ItemCategory.objects.create(title="Test Item Category", room=room_type)
-    assert str(item_category) == "Test Item Category"
-
-
-@pytest.mark.django_db
-def test_item_collection_creation():
-    manufacturer = Manufacturer.objects.create(title="Test Manufacturer")
-    item_collection = ItemCollection.objects.create(title="Test Item Collection", manufacturer=manufacturer)
-    assert item_collection.title == "Test Item Collection"
-    assert item_collection.manufacturer == manufacturer
-
-
-@pytest.mark.django_db
-def test_item_collection_str_method():
-    manufacturer = Manufacturer.objects.create(title="Test Manufacturer")
-    item_collection = ItemCollection.objects.create(title="Test Item Collection", manufacturer=manufacturer)
-    assert str(item_collection) == "Test Item Collection"
-
-
-@pytest.mark.django_db
-def test_colours_creation():
-    colour = ItemColour.objects.create(title="Test Colour")
-    assert colour.title == "Test Colour"
-
-
-@pytest.mark.django_db
-def test_colours_str_method():
-    colour = ItemColour.objects.create(title="Test Colour")
-    assert str(colour) == "Test Colour"
-
-
-@pytest.mark.django_db
-def test_wood_creation():
-    material = ItemMaterial.objects.create(title="Test Wood")
-    assert material.title == "Test Wood"
-
-
-@pytest.mark.django_db
-def test_wood_str_method():
-    material = ItemMaterial.objects.create(title="Test Wood")
-    assert str(material) == "Test Wood"
-
-
-@pytest.mark.django_db
-def test_items_creation():
-    room_type = RoomType.objects.create(title="Test Room Type")
-    item_category = ItemCategory.objects.create(title="Test Item Category", room=room_type)
-    manufacturer = Manufacturer.objects.create(title="Test Manufacturer")
-    item_collection = ItemCollection.objects.create(title="Test Item Collection", manufacturer=manufacturer)
-    item = Items.objects.create(
-        title="Test Item",
-        article_code=12345,
-        price=100.0,
-        upholstery_material="Test Upholstery Material",
-        upholstery_capacity=100,  # Provide a value for upholstery_capacity
-        d_length=10,
-        d_width=5,
-        d_height=2,
-        dimension_in_use_length=8,
-        dimension_in_use_width=4,
-        dimension_in_use_height=1,
-        counter_claw=False,
-        manufacturer=manufacturer,
-        collection=item_collection,
-        item_category=item_category,
-        room_type=room_type,
-    )
-    assert item.title == "Test Item"
-    assert item.article_code == 12345
-
-
-
-@pytest.mark.django_db
-def test_items_str_method():
-    room_type = RoomType.objects.create(title="Test Room Type")
-    item_category = ItemCategory.objects.create(title="Test Item Category", room=room_type)
-    manufacturer = Manufacturer.objects.create(title="Test Manufacturer")
-    item_collection = ItemCollection.objects.create(title="Test Item Collection", manufacturer=manufacturer)
-    item = Items.objects.create(
-        title="Test Item",
-        article_code=12345,
-        price=100.0,
-        upholstery_material="Test Upholstery Material",
-        upholstery_capacity=50,
-        d_length=10,
-        d_width=5,
-        d_height=2,
-        dimension_in_use_length=8,
-        dimension_in_use_width=4,
-        dimension_in_use_height=1,
-        counter_claw=False,
-        manufacturer=manufacturer,
-        collection=item_collection,
-        item_category=item_category,
-        room_type=room_type,
-    )
+def test_items():
+    # Create an instance of ItemCategory
+    item_room_type = ItemRoomType.objects.create(title="Test Room Type")
+    item_category = ItemCategory.objects.create(title="Test Category", room=item_room_type)
+    # Create an instance of ItemCollection
+    item_manufacturer = ItemManufacturer.objects.create(title="Test Manufacturer")
+    item_collection = ItemCollection.objects.create(title="Test Collection", manufacturer=item_manufacturer)
+    # Create an instance of Items with the created ItemCategory and ItemCollection
+    item = Items.objects.create(title="Test Item", price=100.0, article_code=12345, item_category=item_category, collection=item_collection, length=10, width=10, height=10, form="Test Form")
     assert str(item) == "Test Item"
 
 
-# @pytest.mark.django_db
-# def test_photos_creation():
-#     item = Items.objects.create(title="Test Item", article_code=12345, price=100.0, upholstery_material='test', upholstery_capacity=100)
-#     photo = ItemPhoto.objects.create(photo="test.jpg", item=item)
-#     assert photo.photo == "test.jpg"
-#     assert photo.item == item
-#
-#
-# @pytest.mark.django_db
-# def test_reviews_creation():
-#     item = Items.objects.create(title="Test Item", article_code=12345, price=100.0, upholstery_material='test', upholstery_capacity=100)
-#     review = Reviews.objects.create(item=item, first_name="John", second_name="Doe", rating=4)
-#     assert review.first_name == "John"
-#     assert review.rating == 4
-#
-#
-# @pytest.mark.django_db
-# def test_reviews_str_method():
-#     item = Items.objects.create(title="Test Item", article_code=12345, price=100.0, upholstery_material='test', upholstery_capacity=100)
-#     review = Reviews.objects.create(item=item, first_name="John", second_name="Doe", rating=4)
-#     assert str(review) == str(item)
+@pytest.mark.django_db
+def test_item_materials():
+    # Create an instance of ItemMaterials
+    item_materials = ItemMaterials.objects.create(material_type="Test Material Type", manufacturer="Test Manufacturer", title="Test Material", colour="Test Colour")
+    assert str(item_materials) == "Test Material"
+
+
+@pytest.mark.django_db
+def test_item_hard_body():
+    # Create an instance of Items
+    item = Items.objects.create(title="Test Item", price=100.0, article_code=12345, length=10, width=10, height=10, form="Test Form")
+    # Create an instance of ItemMaterials
+    item_materials = ItemMaterials.objects.create(material_type="Test Material Type", manufacturer="Test Manufacturer", title="Test Material", colour="Test Colour")
+    # Create an instance of ItemHardBody with the created Items and ItemMaterials
+    item_hard_body = ItemHardBody.objects.create(related_item=item, body_material=item_materials)
+    assert item_hard_body.related_item == item
+
+
+@pytest.mark.django_db
+def test_item_soft_body():
+    # Create an instance of Items
+    item = Items.objects.create(title="Test Item", price=100.0, article_code=12345, length=10, width=10, height=10, form="Test Form")
+    # Create an instance of ItemMaterials
+    item_materials = ItemMaterials.objects.create(material_type="Test Material Type", manufacturer="Test Manufacturer", title="Test Material", colour="Test Colour")
+    # Create an instance of ItemSoftBody with the created Items and ItemMaterials
+    item_soft_body = ItemSoftBody.objects.create(related_item=item, sleep_place="Test Sleep Place", sleep_size="Test Sleep Size", springs_type="Test Springs Type", linen_niche=True, mechanism="Test Mechanism", filler="Test Filler", counter_claw=True, armrests="Test Armrests", max_weight=100, upholstery_material=item_materials, other="Test Other")
+    assert item_soft_body.related_item == item
+
+
+@pytest.mark.django_db
+def test_item_photo():
+    # Create an instance of Items
+    item = Items.objects.create(title="Test Item", price=100.0, article_code=12345, length=10, width=10, height=10, form="Test Form")
+    # Create an instance of ItemPhoto with the created Items
+    item_photo = ItemPhoto.objects.create(related_item=item)
+    assert item_photo.related_item == item
+
+
+@pytest.mark.django_db
+def test_item_review():
+    # Create an instance of Items
+    item = Items.objects.create(title="Test Item", price=100.0, article_code=12345, length=10, width=10, height=10, form="Test Form")
+    # Create an instance of ItemReview with the created Items
+    item_review = ItemReview.objects.create(related_item=item, first_name="Test First Name", second_name="Test Second Name", rating=4)
+    assert item_review.related_item == item
