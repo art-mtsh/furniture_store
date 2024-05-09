@@ -7,17 +7,18 @@ from .serializers import *
 from brake.decorators import ratelimit
 from sematext import log_engine
 
-
 ratelimit_m = '10/m'
+
 
 @ratelimit(block=True, rate=ratelimit_m)
 def button_view(request):
     return JsonResponse({'message': 'Hello World'})
 
+
 # 1234
 
-class RoomTypeView(generics.ListCreateAPIView):
-    queryset = RoomType.objects.all()
+class ItemRoomTypeView(generics.ListCreateAPIView):
+    queryset = ItemRoomType.objects.all()
     serializer_class = RoomTypeSerializer
     try:
         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
@@ -48,7 +49,7 @@ class ItemCategoryView(generics.ListCreateAPIView):
 
 
 class ManufacturerView(generics.ListCreateAPIView):
-    queryset = Manufacturer.objects.all()
+    queryset = ItemManufacturer.objects.all()
     serializer_class = ManufacturerSerializer
 
     try:
@@ -95,32 +96,48 @@ class ItemsView(generics.ListCreateAPIView):
         log_engine.error("An error occurred: %s", str(e), exc_info=True)
 
 
-class ColourView(generics.ListCreateAPIView):
-    queryset = ItemColour.objects.all()
-    serializer_class = ItemColourSerializer
+class ItemMaterialsView(generics.ListCreateAPIView):
+    queryset = ItemMaterials.objects.all()
+    serializer_class = ItemMaterialsSerializer
 
     try:
         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
-            log_engine.info('Request to ColourView')
+            log_engine.info('Request to ItemMaterials')
             if getattr(request, 'limits', {}):
-                log_engine.warning('Too many requests for ColourView')
+                log_engine.warning('Too many requests for ItemMaterials')
                 return HttpResponse('Too many requests', status=429, content_type='text/plain')
             return super().dispatch(request, *args, **kwargs)
     except Exception as e:
         log_engine.error("An error occurred: %s", str(e), exc_info=True)
 
 
-class MaterialView(generics.ListCreateAPIView):
-    queryset = ItemMaterial.objects.all()
-    serializer_class = ItemMaterialSerializer
+class ItemHardBodyView(generics.ListCreateAPIView):
+    queryset = ItemHardBody.objects.all()
+    serializer_class = ItemHardBodySerializer
 
     try:
         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
-            log_engine.info('Request to MaterialView')
+            log_engine.info('Request to ItemHardBody')
             if getattr(request, 'limits', {}):
-                log_engine.warning('Too many requests for MaterialView')
+                log_engine.warning('Too many requests for ItemHardBody')
+                return HttpResponse('Too many requests', status=429, content_type='text/plain')
+            return super().dispatch(request, *args, **kwargs)
+    except Exception as e:
+        log_engine.error("An error occurred: %s", str(e), exc_info=True)
+
+
+class ItemSoftBodyView(generics.ListCreateAPIView):
+    queryset = ItemSoftBody.objects.all()
+    serializer_class = ItemSoftBodySerializer
+
+    try:
+        @method_decorator(ratelimit(block=False, rate=ratelimit_m))
+        def dispatch(self, request, *args, **kwargs):
+            log_engine.info('Request to ItemSoftBody')
+            if getattr(request, 'limits', {}):
+                log_engine.warning('Too many requests for ItemSoftBody')
                 return HttpResponse('Too many requests', status=429, content_type='text/plain')
             return super().dispatch(request, *args, **kwargs)
     except Exception as e:

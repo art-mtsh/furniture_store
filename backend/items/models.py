@@ -3,16 +3,12 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
-class RoomType(models.Model):
+class ItemRoomType(models.Model):
     """
-    Тип кімнати:
-    - офісні меблі
-    - передпокій,
-    - вітальня
-    - спальня
+    Тип кімнати. Унікальні.
     """
 
-    title = models.CharField(max_length=150, db_index=True, verbose_name="Тип кімнати")
+    title = models.CharField(max_length=150, unique=True, verbose_name="Тип кімнати")
 
     def __str__(self):
         return self.title
@@ -23,21 +19,14 @@ class RoomType(models.Model):
         verbose_name_plural = "Типи кімнат"
         ordering = ['title']
 
-    # def get_absolute_url(self):
-    #     return reverse('category', kwargs={'category_id': self.pk})
-
 
 class ItemCategory(models.Model):
     """
-    Категорія:
-    - шафи
-    - комоди
-    - ліжка
-    - столи
+    Категорія.
     """
 
     title = models.CharField(max_length=150, db_index=True, verbose_name="Категорія")
-    room = models.ForeignKey(RoomType, verbose_name='Тип кімнати', on_delete=models.SET_NULL, null=True)
+    room = models.ForeignKey(ItemRoomType, verbose_name='Тип кімнати', on_delete=models.PROTECT)
 
     def __str__(self):
         return self.title
@@ -48,16 +37,13 @@ class ItemCategory(models.Model):
         verbose_name_plural = "Категорії об'єкта"
         ordering = ['title']
 
-    # def get_absolute_url(self):
-    #     return reverse('category', kwargs={'category_id': self.pk})
 
-
-class Manufacturer(models.Model):
+class ItemManufacturer(models.Model):
     """
-    Інформація про виробника.
+    Виробник. Унікальні.
     """
 
-    title = models.CharField(max_length=150, db_index=True, verbose_name="Виробник")
+    title = models.CharField(max_length=150, unique=True, verbose_name="Виробник")
     about = models.TextField(blank=True, verbose_name='Інформація')
 
     def __str__(self):
@@ -76,7 +62,7 @@ class ItemCollection(models.Model):
     """
 
     title = models.CharField(max_length=150, db_index=True, verbose_name="Колекція")
-    manufacturer = models.ForeignKey(Manufacturer, verbose_name='Виробник', on_delete=models.PROTECT, null=True)
+    manufacturer = models.ForeignKey(ItemManufacturer, verbose_name='Виробник', on_delete=models.PROTECT)
 
     def __str__(self):
         return self.title
@@ -90,36 +76,28 @@ class ItemCollection(models.Model):
 
 class Items(models.Model):
     """
-    Інформація про об'єкт. Це кінцева картка товару
+    Інформація про об'єкт.
     """
 
-    title = models.CharField(max_length=150, verbose_name='Назва товару', blank=False)
+    title = models.CharField(max_length=150, verbose_name='Назва', blank=False)
+    price = models.FloatField(verbose_name='Ціна')
     article_code = models.IntegerField(verbose_name='Артикул', unique=True, blank=False)
-    price = models.FloatField(verbose_name='Ціна, ГРН')
-    description = models.TextField(blank=True, verbose_name='Опис товару')
-    upholstery_material = models.CharField(max_length=150, verbose_name='Наповнення', blank=True, null=True)
-    upholstery_capacity = models.IntegerField(verbose_name='Щільність набивки', blank=True, null=True)
-    d_length = models.IntegerField(verbose_name='Загальна довжина', blank=True)
-    d_width = models.IntegerField(verbose_name='Загальна ширина', blank=True)
-    d_height = models.IntegerField(verbose_name='Загальна висота', blank=True)
-    dimension_in_use_length = models.IntegerField(verbose_name='Корисна довжина', blank=True)
-    dimension_in_use_width = models.IntegerField(verbose_name='Корисна ширина', blank=True)
-    dimension_in_use_height = models.IntegerField(verbose_name='Загальна висота', blank=True)
-    counter_claw = models.BooleanField(verbose_name='Захист від кігтів', default=False)
+    description = models.TextField(blank=True, verbose_name='Опис')
+    colour = models.CharField(max_length=150, verbose_name='Колір', blank=True)
     avaliability = models.BooleanField(verbose_name='В наявності', default=True)
-    in_stock = models.IntegerField(verbose_name='Кількість на складі', default=1)
+    in_stock = models.IntegerField(verbose_name='На складі', default=1)
 
-    manufacturer = models.ForeignKey(Manufacturer, verbose_name='Виробник', on_delete=models.SET_NULL, null=True)  # виробник
-    collection = models.ForeignKey(ItemCollection, verbose_name='Колекція', on_delete=models.SET_NULL, null=True)  # колекція
+    length = models.IntegerField(verbose_name='Довжина', blank=True)
+    width = models.IntegerField(verbose_name='Висота', blank=True)
+    height = models.IntegerField(verbose_name='Висота', blank=True)
+    form = models.CharField(max_length=50, verbose_name='Форма')
+
     item_category = models.ForeignKey(ItemCategory, verbose_name='Категорія', on_delete=models.SET_NULL, null=True)  # категорія
-    room_type = models.ForeignKey(RoomType, verbose_name='Тип кімнати', on_delete=models.SET_NULL, null=True)  # тип кімнати
+    collection = models.ForeignKey(ItemCollection, verbose_name='Колекція', on_delete=models.SET_NULL, null=True)  # колекція
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Створено')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Відредаговано')
-    is_published = models.BooleanField(default=True, verbose_name='Статус публікації')
-
-    # def get_absolute_url(self):
-    #     return reverse('view_news', kwargs={'news_id': self.pk})
+    is_published = models.BooleanField(default=True, verbose_name='Статус')
 
     def __str__(self):
         return self.title
@@ -128,58 +106,94 @@ class Items(models.Model):
         db_table = 'item_items'
         verbose_name = "Товар"
         verbose_name_plural = "Товари"
-        ordering = ['room_type', 'item_category', 'title']
+        ordering = ['item_category', 'title']
 
 
-class ItemColour(models.Model):
+class ItemMaterials(models.Model):
     """
-    Інформація про колір товару.
+    Усі матеріали.
     """
 
-    title = models.CharField(max_length=150, db_index=True, verbose_name="Колекція")
-    item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.SET_NULL, null=True)  # товар
+    material_type = models.CharField(max_length=50, verbose_name='Тип матеріалу', blank=False)
+    manufacturer = models.CharField(max_length=100, verbose_name='Виробник матеріалу', blank=False)
+    title = models.CharField(max_length=150, verbose_name='Назва матеріалу', blank=False)
+    colour = models.CharField(max_length=50, verbose_name='Колір матеріалу', blank=False)
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Семпл кольору', blank=True)
 
     def __str__(self):
         return self.title
 
     class Meta:
-        db_table = 'item_colours'
-        verbose_name = "Колір"
-        verbose_name_plural = "Кольори"
-        ordering = ['title']
+        db_table = 'item_materials'
+        verbose_name = "Матеріали"
+        verbose_name_plural = "Матеріали"
+        ordering = ['material_type', 'manufacturer', 'title']
 
 
-class ItemMaterial(models.Model):
+class ItemHardBody(models.Model):
     """
-    Інформація про матеріал.
+    Матеріали корпусу.
     """
-    title = models.CharField(max_length=150, db_index=True, verbose_name="Матеріал")
-    item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.SET_NULL, null=True)  # товар
-    photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Семпл дерева', blank=True)
+    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.title
+    body_material = models.ForeignKey(ItemMaterials, verbose_name='Корпус', on_delete=models.SET_NULL, null=True, related_name='body_material')
+    facade_material = models.ForeignKey(ItemMaterials, verbose_name='Фасад', on_delete=models.SET_NULL, null=True, related_name='facade_material')
+    tabletop_material = models.ForeignKey(ItemMaterials, verbose_name='Стільниця', on_delete=models.SET_NULL, null=True, related_name='tabletop_material')
+
+    # def __str__(self):
+    #     return self.related_item.title
 
     class Meta:
-        db_table = 'item_material'
-        verbose_name = "Матеріал"
-        verbose_name_plural = "Матеріали"
-        ordering = ['title']
+        db_table = 'item_hard_body'
+        verbose_name = "Корпус"
+        verbose_name_plural = "Корпуси"
+        ordering = ['related_item']
+
+
+class ItemSoftBody(models.Model):
+    """
+    М'які матеріали.
+    """
+    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
+
+    sleep_place = models.CharField(max_length=100, verbose_name='Спальне місце')
+    sleep_size = models.CharField(max_length=100, verbose_name='Спальне місце ДхШ')
+    springs_type = models.CharField(max_length=100, verbose_name='Пружини')
+    linen_niche = models.BooleanField(verbose_name='Ніша д.білизни')
+    mechanism = models.CharField(max_length=100, verbose_name='Механізм')
+    filler = models.CharField(max_length=100, verbose_name='Наповнення')
+    counter_claw = models.BooleanField(verbose_name='Антикіготь')
+    armrests = models.CharField(max_length=100, verbose_name='Підлокітники')
+    max_weight = models.IntegerField(verbose_name='Макс. навантаження')
+    upholstery_material = models.ForeignKey(ItemMaterials, verbose_name='Оббивка', on_delete=models.SET_NULL, null=True)
+    other = models.CharField(max_length=150, verbose_name='Інше')
+
+    # def __str__(self):
+    #     return self.related_item.title
+
+    class Meta:
+        db_table = 'item_soft_body'
+        verbose_name = "М'який матеріал"
+        verbose_name_plural = "М'які матеріали"
+        ordering = ['related_item']
 
 
 class ItemPhoto(models.Model):
     """
     Фотографії товару.
     """
+    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE, default=None)
+
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name="Фото товару", blank=True)
-    item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE, null=True)  # товар
+
+    # def __str__(self):
+    #     return self.related_item.title
 
     class Meta:
         db_table = 'item_photo'
         verbose_name = "Фото"
         verbose_name_plural = "Фото"
-        ordering = ['item']
+        ordering = ['related_item']
 
 
 def validate_even(value):
@@ -193,19 +207,19 @@ class ItemReview(models.Model):
     """
     Відгуки про товар.
     """
+    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
 
-    item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.PROTECT, null=True, related_name='get_news')
     first_name = models.CharField(max_length=150, verbose_name="Ім'я", blank=False)
     second_name = models.CharField(max_length=150, verbose_name='Прізвище', blank=False)
     review = models.TextField(blank=True, verbose_name='Відгук')
     rating = models.IntegerField(verbose_name='Оцінка товару', blank=False, validators=[validate_even])
     review_usefulness_counter = models.IntegerField(verbose_name='Корисність відгуку', default=0)
 
-    def __str__(self):
-        return self.item.title
+    # def __str__(self):
+    #     return self.related_item.title
 
     class Meta:
         db_table = 'item_review'
         verbose_name = "Відгук"
         verbose_name_plural = "Відгуки"
-        ordering = ['item']
+        ordering = ['related_item']
