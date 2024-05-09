@@ -17,12 +17,14 @@ class ItemCategoryAdmin(admin.ModelAdmin):
     # list_editable = ('title', 'room',)
     list_filter = ('room',)
 
+
 class ManufacturerAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'about',)
     list_display_links = ('title',)
     search_fields = ('title', 'about',)
     # list_editable = ('title', 'about',)
     # list_filter = ('room')
+
 
 class ItemCollectionAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'manufacturer',)
@@ -31,27 +33,25 @@ class ItemCollectionAdmin(admin.ModelAdmin):
     # list_editable = ('title', 'manufacturer',)
     list_filter = ('manufacturer',)
 
+
 class ItemsAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'title',
-                    'article_code',
                     'price',
-                    'manufacturer',
-                    'collection',
+                    'article_code',
+                    'colour',
+                    'avaliability',
+                    'in_stock',
                     'item_category',
-                    'room_type',
+                    'collection',
                     'updated_at',
                     'is_published',
                     )
     list_display_links = ('title',)
     search_fields = ('id',
-                    'title',
-                    'article_code',
-                    'manufacturer',
-                    'collection',
-                    'item_category',
-                    'room_type',
-                    )
+                     'title',
+                     'article_code',
+                     )
     # list_editable = ('title',
     #                 'article_code',
     #                 'price',
@@ -71,48 +71,58 @@ class ItemsAdmin(admin.ModelAdmin):
     #                 'is_published',
     #                 )
     list_filter = ('id',
-                    'title',
-                    'article_code',
-                    'manufacturer',
-                    'collection',
-                    'item_category',
-                    'room_type',
-                    )
+                   'title',
+                   'article_code',
+                   )
 
-class ItemColourAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'item', 'photo',)
-    list_display_links = ('title',)
-    search_fields = ('item',)
-    # list_editable = ('item',)
-    list_filter = ('item',)
 
-class ItemMaterialAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'item', 'photo',)
+class ItemMaterialsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'material_type', 'manufacturer', 'title', 'colour')
     list_display_links = ('title',)
-    search_fields = ('item',)
-    # list_editable = ('item',)
-    list_filter = ('item',)
+    search_fields = ('title',)
+    # list_editable = ('related_item',)
+    list_filter = ('material_type', 'manufacturer', 'title', 'colour')
+
+
+class ItemHardBodyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'related_item', 'body_material', 'facade_material', 'tabletop_material')
+    list_display_links = ('related_item',)
+    search_fields = ('related_item',)
+    # list_editable = ('related_item',)
+    list_filter = ('related_item',)
+
+
+class ItemSoftBodyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'related_item',)
+    list_display_links = ('related_item',)
+    search_fields = ('related_item',)
+    # list_editable = ('related_item',)
+    list_filter = ('related_item',)
+
 
 class ItemPhotoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'photo', 'item',)
-    list_display_links = ('item',)
-    search_fields = ('item',)
-    # list_editable = ('item',)
-    list_filter = ('item',)
+    list_display = ('id', 'related_item', 'photo',)
+    list_display_links = ('related_item',)
+    search_fields = ('related_item',)
+    # list_editable = ('related_item',)
+    list_filter = ('related_item',)
+
 
 class ItemReviewAdmin(admin.ModelAdmin):
-    list_display = ('id', 'item', 'first_name', 'second_name', 'review', 'rating', 'review_usefulness_counter',)
-    list_display_links = ('item',)
-    search_fields = ('item', 'rating',)
-    # list_editable = ('item', 'rating',)
-    list_filter = ('item', 'rating',)
+    list_display = ('id', 'related_item', 'first_name', 'second_name', 'rating', 'review_usefulness_counter',)
+    list_display_links = ('related_item',)
+    search_fields = ('related_item', 'rating',)
+    # list_editable = ('related_item', 'rating',)
+    list_filter = ('related_item', 'rating',)
 
-admin.site.register(RoomType, RoomTypeAdmin)
+
+admin.site.register(ItemRoomType, RoomTypeAdmin)
 admin.site.register(ItemCategory, ItemCategoryAdmin)
-admin.site.register(Manufacturer, ManufacturerAdmin)
+admin.site.register(ItemManufacturer, ManufacturerAdmin)
 admin.site.register(ItemCollection, ItemCollectionAdmin)
 admin.site.register(Items, ItemsAdmin)
-admin.site.register(ItemColour, ItemColourAdmin)
-admin.site.register(ItemMaterial, ItemMaterialAdmin)
+admin.site.register(ItemMaterials, ItemMaterialsAdmin)
+admin.site.register(ItemHardBody, ItemHardBodyAdmin)
+admin.site.register(ItemSoftBody, ItemSoftBodyAdmin)
 admin.site.register(ItemPhoto, ItemPhotoAdmin)
 admin.site.register(ItemReview, ItemReviewAdmin)

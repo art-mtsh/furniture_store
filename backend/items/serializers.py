@@ -4,7 +4,7 @@ from .models import *
 
 class RoomTypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RoomType
+        model = ItemRoomType
         fields = ['title']
 
 
@@ -15,9 +15,8 @@ class ItemCategorySerializer(serializers.ModelSerializer):
 
 
 class ManufacturerSerializer(serializers.ModelSerializer):
-
     class Meta:
-        model = Manufacturer
+        model = ItemManufacturer
         fields = ['title', 'about']
 
 
@@ -31,47 +30,60 @@ class ItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Items
         fields = ['title',
-                  'article_code',
                   'price',
-                  'upholstery_material',
-                  'upholstery_capacity',
-                  'd_length',
-                  'd_width',
-                  'd_height',
-                  'dimension_in_use_length',
-                  'dimension_in_use_width',
-                  'dimension_in_use_height',
-                  'counter_claw',
+                  'article_code',
+                  'description',
+                  'colour',
                   'avaliability',
                   'in_stock',
-                  'manufacturer',
-                  'collection',
+                  'length',
+                  'width',
+                  'height',
+                  'form',
                   'item_category',
-                  'room_type',
+                  'collection',
                   'created_at',
                   'created_at',
                   'is_published']
 
 
-class ItemColourSerializer(serializers.ModelSerializer):
+class ItemMaterialsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ItemColour
-        fields = ['title', 'item', 'photo']
+        model = ItemMaterials
+        fields = ['material_type', 'manufacturer', 'title', 'colour', 'photo']
 
 
-class ItemMaterialSerializer(serializers.ModelSerializer):
+class ItemHardBodySerializer(serializers.ModelSerializer):
     class Meta:
-        model = ItemMaterial
-        fields = ['title', 'item', 'photo']
+        model = ItemHardBody
+        fields = ['related_item', 'body_material', 'facade_material', 'tabletop_material']
+
+
+class ItemSoftBodySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemSoftBody
+        fields = ['related_item',
+                  'sleep_place',
+                  'sleep_size',
+                  'springs_type',
+                  'linen_niche',
+                  'mechanism',
+                  'filler',
+                  'counter_claw',
+                  'armrests',
+                  'max_weight',
+                  'upholstery_material',
+                  'other',
+                  ]
 
 
 class ItemPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPhoto
-        fields = ['photo', 'item']
+        fields = ['related_item', 'photo']
 
 
 class ItemReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemReview
-        fields = ['item', 'first_name', 'second_name', 'rating', 'review_usefulness_counter']
+        fields = ['related_item', 'first_name', 'second_name', 'review', 'rating', 'review_usefulness_counter']

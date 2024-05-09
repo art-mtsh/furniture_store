@@ -66,7 +66,9 @@ MIDDLEWARE = [
 ]
 
 # шукає глобальну змінну 'ENVIRONMENT', якщо її нема встановлює 'development'
-ENVIRONMENT = os.environ.get('ENVIRONMENT', "Development")
+# ENVIRONMENT = os.environ.get('ENVIRONMENT', "Development")
+ENVIRONMENT = 'production'
+
 
 # таким чином розділяємо тестову та продакшн БД
 # ПОСЛІДОВНИЙ ЗАПУСК НЕ ПРАЦЮЄ!!!
@@ -82,13 +84,13 @@ if ENVIRONMENT == 'production':
             'PORT': os.getenv('DB_PORT'),
         }
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
 
 CORS_ALLOW_ALL_ORIGINS = True # відключити на прод
 CORS_ALLOWS_CREDENTIALS = True
