@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -10,16 +10,10 @@ from sematext import log_engine
 ratelimit_m = '10/m'
 
 
-@ratelimit(block=True, rate=ratelimit_m)
-def button_view(request):
-    return JsonResponse({'message': 'Hello World'})
-
-
-# 1234
-
 class ItemRoomTypeView(generics.ListCreateAPIView):
     queryset = ItemRoomType.objects.all()
     serializer_class = RoomTypeSerializer
+
     try:
         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
         def dispatch(self, request, *args, **kwargs):
@@ -33,8 +27,15 @@ class ItemRoomTypeView(generics.ListCreateAPIView):
 
 
 class ItemCategoryView(generics.ListCreateAPIView):
-    queryset = ItemCategory.objects.all()
     serializer_class = ItemCategorySerializer
+
+    def get_queryset(self):
+        room_id = self.kwargs.get('room_id')
+        if room_id is not None:
+            obj = ItemCategory.objects.filter(room_id=room_id)
+            if not obj:
+                raise Http404('Categories not found.')
+            return obj
 
     try:
         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
@@ -81,8 +82,18 @@ class CollectionView(generics.ListCreateAPIView):
 
 
 class ItemsView(generics.ListCreateAPIView):
-    queryset = Items.objects.all()
     serializer_class = ItemsSerializer
+
+    def get_queryset(self):
+        cat_id = self.kwargs.get('cat_id')
+        if cat_id is not None:
+            obj = Items.objects.filter(item_category_id=cat_id)
+            if not obj:
+                raise Http404('Items not found.')
+            return obj
+        return Items.objects.all()
+
+
 
     try:
         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
