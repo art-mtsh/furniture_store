@@ -5,13 +5,13 @@ from .models import *
 class RoomTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemRoomType
-        fields = ['title']
+        fields = ['id', 'title']
 
 
 class ItemCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemCategory
-        fields = ['title', 'room']
+        fields = ['id', 'title', 'room']
 
 
 class ManufacturerSerializer(serializers.ModelSerializer):
@@ -29,22 +29,25 @@ class ItemCollectionSerializer(serializers.ModelSerializer):
 class ItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Items
-        fields = ['title',
-                  'price',
-                  'article_code',
-                  'description',
-                  'colour',
-                  'avaliability',
-                  'in_stock',
-                  'length',
-                  'width',
-                  'height',
-                  'form',
-                  'item_category',
-                  'collection',
-                  'created_at',
-                  'created_at',
-                  'is_published']
+        fields = [
+            'id',
+            'title',
+            'price',
+            'article_code',
+            'description',
+            'colour',
+            'avaliability',
+            'in_stock',
+            'length',
+            'width',
+            'height',
+            'form',
+            'item_category',
+            'collection',
+            'created_at',
+            'created_at',
+            'is_published'
+        ]
 
 
 class ItemMaterialsSerializer(serializers.ModelSerializer):
