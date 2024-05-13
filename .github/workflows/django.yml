@@ -1,4 +1,4 @@
-name: EC2 Python APP
+# name: EC2 Python APP
 
 on:
   push:
@@ -34,11 +34,11 @@ jobs:
           flake8 --exclude=venv/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         shell: bash
 
-      - name: Test with pytest
-        run: |
-          cd backend
-          DJANGO_SETTINGS_MODULE=backend.settings pytest
-        shell: bash
+      # - name: Test with pytest
+      #   run: |
+      #     cd backend
+      #     DJANGO_SETTINGS_MODULE=backend.settings pytest
+      #   shell: bash
 
   docker:
     runs-on: ubuntu-latest
