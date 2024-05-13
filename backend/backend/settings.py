@@ -31,7 +31,6 @@ REST_FRAMEWORK = {
 # rest_framework.permissions.AllowAny - за замовчуванням credentials не питаємо, необхідність визначаємо самим view
 
 
-
 # час життя JWT токена
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
@@ -69,11 +68,9 @@ MIDDLEWARE = [
 # ENVIRONMENT = os.environ.get('ENVIRONMENT', "Development")
 ENVIRONMENT = 'production'
 
-
 # таким чином розділяємо тестову та продакшн БД
 # ПОСЛІДОВНИЙ ЗАПУСК НЕ ПРАЦЮЄ!!!
 if ENVIRONMENT == 'production':
-
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -92,7 +89,7 @@ if ENVIRONMENT == 'production':
 #         }
 #     }
 
-CORS_ALLOW_ALL_ORIGINS = True # відключити на прод
+CORS_ALLOW_ALL_ORIGINS = True  # відключити на прод
 CORS_ALLOWS_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'GET',
@@ -127,10 +124,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
 LANGUAGE_CODE = 'en'
@@ -178,3 +175,18 @@ LOGGING = {
         }
     },
 }
+
+# from google.oauth2 import service_account
+#
+# credentials_path = os.path.join(os.path.dirname(__file__), 'credentials.json')
+# GS_CREDENTIALS = service_account.Credentials.from_service_account_file(credentials_path)
+
+# STORAGES = {
+#     'default': 'custom_storage_backend.CustomStorage'
+# }
+
+# DEFAULT_FILE_STORAGE = 'backend.gcloud.GoogleCloudMediaFileStorage'
+# GS_PROJECT_ID = 'alien-clover-423108-a5'
+# GS_BUCKET_NAME = 'mystore2384823849'
+# MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
+

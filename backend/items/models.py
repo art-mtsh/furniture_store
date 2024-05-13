@@ -182,12 +182,14 @@ class ItemPhoto(models.Model):
     """
     Фотографії товару.
     """
-    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE, default=None)
 
-    photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name="Фото товару", blank=True)
+    def item_photo_upload_path(instance, filename):
+        category = instance.related_item.item_category
+        item_id = instance.related_item_id
+        return f"items/{category}/{item_id}/{filename}"
 
-    # def __str__(self):
-    #     return self.related_item.title
+    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
+    photo = models.ImageField(upload_to=item_photo_upload_path, verbose_name="Фото товару", blank=True)
 
     class Meta:
         db_table = 'item_photo'
