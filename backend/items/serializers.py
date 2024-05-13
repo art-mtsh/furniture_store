@@ -27,6 +27,8 @@ class ItemCollectionSerializer(serializers.ModelSerializer):
 
 
 class ItemsSerializer(serializers.ModelSerializer):
+    item_category_title = serializers.CharField(source='item_category.title', read_only=True)
+    item_room_title = serializers.CharField(source='item_category.room.title', read_only=True)
     class Meta:
         model = Items
         fields = [
@@ -42,7 +44,8 @@ class ItemsSerializer(serializers.ModelSerializer):
             'width',
             'height',
             'form',
-            'item_category',
+            'item_category_title',
+            'item_room_title',
             'collection',
             'created_at',
             'created_at',
