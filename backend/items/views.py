@@ -57,7 +57,7 @@ class ItemsView(generics.ListCreateAPIView):
     def get_queryset(self):
         cat_id = self.kwargs.get('cat_id')
         if cat_id is not None:
-            obj = Items.objects.filter(item_category_id=cat_id)
+            obj = Items.objects.filter(item_category_id=cat_id).order_by('id')
             if not obj:
                 raise Http404('Items not found.')
             return obj

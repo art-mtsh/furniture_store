@@ -14,7 +14,7 @@ def set_environment():
     if platform.node() == "DESKTOP-5PMV5U1":
 
         os.environ['ENVIRONMENT'] = 'development'
-        os.environ['IP_ADDRESS'] = 'localhost:8000'
+        os.environ['IP_ADDRESS'] = '127.0.0.1:8000'
     else:
         os.environ['ENVIRONMENT'] = 'production'
         os.environ['IP_ADDRESS'] = '0.0.0.0:8000'
