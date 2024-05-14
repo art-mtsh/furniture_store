@@ -182,6 +182,6 @@ credentials_path = os.path.join(os.path.dirname(__file__), 'credentials.json')
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(credentials_path)
 
 DEFAULT_FILE_STORAGE = 'backend.gcloud.GoogleCloudMediaFileStorage'
-GS_PROJECT_ID = 'alien-clover-423108-a5'
-GS_BUCKET_NAME = 'mystore2384823849'
+GS_PROJECT_ID = os.getenv('GS_PROJECT_ID')
+GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME')
 MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
