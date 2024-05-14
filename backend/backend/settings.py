@@ -177,10 +177,11 @@ LOGGING = {
 }
 
 from google.oauth2 import service_account
+import json
 
-credentials_path = os.path.join(os.path.dirname(__file__), 'credentials.json')
-GS_CREDENTIALS = service_account.Credentials.from_service_account_file(credentials_path)
 
+GS_CREDENTIALS_JSON = os.getenv('CREDENTIALS_JSON')
+GS_CREDENTIALS = service_account.Credentials.from_service_account_info(json.loads(GS_CREDENTIALS_JSON))
 DEFAULT_FILE_STORAGE = 'backend.gcloud.GoogleCloudMediaFileStorage'
 GS_PROJECT_ID = os.getenv('GS_PROJECT_ID')
 GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME')

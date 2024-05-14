@@ -20,9 +20,7 @@ def set_environment():
         os.environ['IP_ADDRESS'] = '0.0.0.0:8000'
 
 
-
 def main():
-
     # встановити перемінну оточення
     set_environment()
 
