@@ -26,9 +26,17 @@ class ItemCollectionSerializer(serializers.ModelSerializer):
         fields = ['title', 'manufacturer']
 
 
+class ItemPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPhoto
+        fields = ['photo']  # Only include the photo field in the serializer
+
+
 class ItemsSerializer(serializers.ModelSerializer):
     item_category_title = serializers.CharField(source='item_category.title', read_only=True)
     item_room_title = serializers.CharField(source='item_category.room.title', read_only=True)
+    photos = serializers.SerializerMethodField()  # SerializerMethodField for custom logic
+
     class Meta:
         model = Items
         fields = [
@@ -48,9 +56,16 @@ class ItemsSerializer(serializers.ModelSerializer):
             'item_room_title',
             'collection',
             'created_at',
-            'created_at',
-            'is_published'
+            'is_published',
+            'photos'
         ]
+    def get_photos(self, obj):
+        # Retrieve related photos for the current item
+        photos_qs = ItemPhoto.objects.filter(related_item=obj)
+        # Serialize the queryset of photos
+        serializer = ItemPhotoSerializer(instance=photos_qs, many=True)
+        return serializer.data
+
 
 
 class ItemMaterialsSerializer(serializers.ModelSerializer):
@@ -83,10 +98,6 @@ class ItemSoftBodySerializer(serializers.ModelSerializer):
                   ]
 
 
-class ItemPhotoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ItemPhoto
-        fields = ['related_item', 'photo']
 
 
 class ItemReviewSerializer(serializers.ModelSerializer):

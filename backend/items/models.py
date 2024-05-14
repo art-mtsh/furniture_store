@@ -184,9 +184,24 @@ class ItemPhoto(models.Model):
     """
 
     def item_photo_upload_path(instance, filename):
-        category = instance.related_item.item_category
-        item_id = instance.related_item_id
-        return f"items/{category}/{item_id}/{filename}"
+        f = filename.split('\\')
+
+        file = f[-1]
+        item = f[-2]
+
+        category = f[-3]
+        category = category.split('.')
+        category = category[1]
+
+        room = f[-3]
+        room = room.split('.')
+        room = room[0]
+
+        # print(f'The instance: {instance.photo}')
+        path = f"items/{room}/{category}/{item}/{file}"
+        print(f'Path passed to GOOGLE Bucket: {path}')
+        return path
+
 
     related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
     photo = models.ImageField(upload_to=item_photo_upload_path, verbose_name="Фото товару", blank=True)
