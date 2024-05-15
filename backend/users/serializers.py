@@ -61,12 +61,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         username = attrs.get("username")
         password = attrs.get("password")
 
-        user = authenticate(username=username, password=password)
+        try:
+            user = User.objects.get(username=username)
+            user = authenticate(username=username, password=password)
+            if not user:
+                raise serializers.ValidationError("291")
+        except User.DoesNotExist:
+            raise serializers.ValidationError("290")
 
-        if not user:
-            raise serializers.ValidationError("Користувача не знайдено!")
-
-        # перевизначаємо атрибут username, бо при логіні по email (якщо username != email) - ми не отримаємо токен
-        attrs['username'] = username
-        data = super().validate(attrs)
-        return data
+        return super().validate(attrs)
