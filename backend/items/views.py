@@ -13,7 +13,7 @@ ratelimit_m = '10/m'
 
 
 class ItemRoomTypeView(generics.ListCreateAPIView):
-    queryset = ItemRoomType.objects.all()
+    queryset = ItemRoomType.objects.all().order_by('id')
     serializer_class = RoomTypeSerializer
 
     try:
@@ -34,7 +34,7 @@ class ItemCategoryView(generics.ListCreateAPIView):
     def get_queryset(self):
         room_id = self.kwargs.get('room_id')
         if room_id is not None:
-            obj = ItemCategory.objects.filter(room_id=room_id)
+            obj = ItemCategory.objects.filter(room_id=room_id).order_by('id')
             if not obj:
                 raise Http404('Categories not found.')
             return obj
@@ -61,7 +61,7 @@ class ItemsView(generics.ListCreateAPIView):
             if not obj:
                 raise Http404('Items not found.')
             return obj
-        return Items.objects.all()
+        return Items.objects.all().order_by('id')
 
     try:
         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
@@ -81,7 +81,7 @@ class ItemsSearchView(generics.ListAPIView):
     def get_queryset(self):
         search_query = self.request.query_params.get('text', None)
 
-        queryset = Items.objects.all()
+        queryset = Items.objects.all().order_by('id')
 
         search_terms = search_query.split('+')
 
@@ -96,7 +96,7 @@ class ItemsSearchView(generics.ListAPIView):
                 models.Q(article_code__icontains=search_query) |
                 models.Q(item_category__title__icontains=search_query) |
                 models.Q(item_category__room__title__icontains=search_query)
-            )
+            ).order_by('id')
 
         if not queryset.exists():
             raise Http404('Items not found.')
@@ -107,7 +107,7 @@ class ItemsSearchView(generics.ListAPIView):
 class ItemPhotoUploadView(generics.ListCreateAPIView):
 
     serializer_class = ItemPhotoSerializer
-    queryset = ItemPhoto.objects.all()
+    queryset = ItemPhoto.objects.all().order_by('id')
 
     # def post(self, request, format=None):
     #     serializer = ItemPhotoSerializer(data=request.data)
