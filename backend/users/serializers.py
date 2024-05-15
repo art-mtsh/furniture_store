@@ -9,14 +9,16 @@ class UserSerializer(serializers.ModelSerializer):
     # визначаємо поля, задаємо параметр не-відображення пароля при GET
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'password']
+        fields = ['id', 'first_name', 'last_name', 'email', 'password']
 
         # в поля username є вбудована unique валідація, в email - немає
         # в поля email є вбудована email валідація
         extra_kwargs = {
+            'first_name': {'required': True},
+            'last_name': {'required': True},
+            'email': {'required': True},
             'password': {'write_only': True},
             'username': {'required': False},
-            'email': {'required': True},
         }
 
     # якщо settings.AUTH_PASSWORD_VALIDATORS не перевіряє
@@ -56,15 +58,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
 
     def validate(self, attrs):
-        user_or_email = attrs.get("username")
+        username = attrs.get("username")
         password = attrs.get("password")
 
-        if '@' in user_or_email:
-            username = User.objects.get(email=user_or_email).username
-        else:
-            username = user_or_email
-
         user = authenticate(username=username, password=password)
+
         if not user:
             raise serializers.ValidationError("Користувача не знайдено!")
 
