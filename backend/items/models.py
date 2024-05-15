@@ -113,12 +113,27 @@ class ItemMaterials(models.Model):
     """
     Усі матеріали.
     """
+    def item_material_upload_path(instance, filename):
+        f = filename.split('\\')
+
+        file = f[-1]
+        parts = file.split('.')
+
+        material_type = parts[0]
+        manufacturer = parts[1]
+        title = parts[2]
+
+        # print(f'The instance: {instance.photo}')
+        path = f"materials/{material_type}/{manufacturer}/{title}/{file}"
+        print(f'Path passed to GOOGLE Bucket: {path}')
+        return path
+
 
     material_type = models.CharField(max_length=50, verbose_name='Тип матеріалу', blank=False)
     manufacturer = models.CharField(max_length=100, verbose_name='Виробник матеріалу', blank=False)
     title = models.CharField(max_length=150, verbose_name='Назва матеріалу', blank=False)
     colour = models.CharField(max_length=50, verbose_name='Колір матеріалу', blank=False)
-    photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Семпл кольору', blank=True)
+    photo = models.ImageField(upload_to=item_material_upload_path, verbose_name='Семпл кольору', blank=True)
 
     def __str__(self):
         return self.title
