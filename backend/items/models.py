@@ -171,17 +171,17 @@ class ItemSoftBody(models.Model):
     """
     related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
 
-    sleep_place = models.CharField(max_length=100, verbose_name='Спальне місце')
-    sleep_size = models.CharField(max_length=100, verbose_name='Спальне місце ДхШ')
-    springs_type = models.CharField(max_length=100, verbose_name='Пружини')
-    linen_niche = models.BooleanField(verbose_name='Ніша д.білизни')
-    mechanism = models.CharField(max_length=100, verbose_name='Механізм')
-    filler = models.CharField(max_length=100, verbose_name='Наповнення')
-    counter_claw = models.BooleanField(verbose_name='Антикіготь')
-    armrests = models.CharField(max_length=100, verbose_name='Підлокітники')
-    max_weight = models.IntegerField(verbose_name='Макс. навантаження')
+    sleep_place = models.CharField(max_length=100, verbose_name='Спальне місце', null=True)
+    sleep_size = models.CharField(max_length=100, verbose_name='Спальне місце ДхШ', null=True)
+    springs_type = models.CharField(max_length=100, verbose_name='Пружини', null=True)
+    linen_niche = models.CharField(verbose_name='Ніша д.білизни', null=True)
+    mechanism = models.CharField(max_length=100, verbose_name='Механізм', null=True)
+    filler = models.CharField(max_length=100, verbose_name='Наповнення', null=True)
+    counter_claw = models.CharField(verbose_name='Антикіготь', null=True)
+    armrests = models.CharField(max_length=100, verbose_name='Підлокітники', null=True)
+    max_weight = models.IntegerField(verbose_name='Макс. навантаження', null=True)
     upholstery_material = models.ForeignKey(ItemMaterials, verbose_name='Оббивка', on_delete=models.SET_NULL, null=True)
-    other = models.CharField(max_length=150, verbose_name='Інше')
+    other = models.CharField(max_length=150, verbose_name='Інше', null=True)
 
     # def __str__(self):
     #     return self.related_item.title
@@ -255,3 +255,20 @@ class ItemReview(models.Model):
         verbose_name = "Відгук"
         verbose_name_plural = "Відгуки"
         ordering = ['related_item']
+
+class ItemDiscount(models.Model):
+    """
+    Знижки на товари.
+    """
+    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
+    discount_percent = models.IntegerField(verbose_name="Знижка, %")
+
+    # def __str__(self):
+    #     return self.related_item.title
+
+    class Meta:
+        db_table = 'item_discount'
+        verbose_name = "Знижка"
+        verbose_name_plural = "Знижка"
+        ordering = ['related_item']
+
