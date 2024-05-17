@@ -1,13 +1,12 @@
 from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
-from rest_framework import generics, views
+from rest_framework import generics
 
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import *
 
 from brake.decorators import ratelimit
 from sematext import log_engine
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 
 ratelimit_m = '10/m'
 
@@ -56,31 +55,20 @@ class ItemsView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         cat_id = self.kwargs.get('cat_id')
+
+        # queryset = Items.objects.all().select_related('item_category').prefetch_related('photo', 'hard_body', 'soft_body', 'review')
+        queryset = Items.objects.all().select_related(
+            'item_category__room'  # Prefetch item_category.room in a single query
+        ).prefetch_related(
+            Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
+            Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
+            Prefetch('soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
+            Prefetch('review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
+            Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
+
         if cat_id is not None:
-            obj = Items.objects.filter(item_category_id=cat_id).order_by('id').prefetch_related(
-        'photo',
-        'hard_body',
-        'soft_body',
-        'discount',
-        'review'
-    )
-            # obj = Items.objects.filter(item_category_id=cat_id).prefetch_related(
-            #     Prefetch('photo', queryset=ItemPhoto.objects.distinct()),
-            #     Prefetch('hard_body', queryset=ItemHardBody.objects.distinct()),
-            #     Prefetch('soft_body', queryset=ItemSoftBody.objects.distinct()),
-            #     Prefetch('discount', queryset=ItemDiscount.objects.distinct()),
-            #     Prefetch('review', queryset=ItemReview.objects.distinct())
-            # )
-            if not obj:
-                raise Http404('Items not found.')
-            return obj
-        return Items.objects.all().prefetch_related(
-        'photo',
-        'hard_body',
-        'soft_body',
-        'discount',
-        'review'
-    )
+            queryset = queryset.filter(item_category_id=cat_id)
+        return queryset
 
     try:
         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
@@ -92,6 +80,13 @@ class ItemsView(generics.ListCreateAPIView):
             return super().dispatch(request, *args, **kwargs)
     except Exception as e:
         log_engine.error("An error occurred: %s", str(e), exc_info=True)
+
+
+class ItemsBestsellers(generics.ListAPIView):
+    serializer_class = ItemsSerializer
+
+    def get_queryset(self):
+        return Items.objects.order_by('-sold')[:50].prefetch_related('photo', 'hard_body', 'soft_body', 'discount', 'review')
 
 
 class ItemsSearchView(generics.ListAPIView):

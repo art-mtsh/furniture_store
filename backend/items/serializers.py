@@ -84,20 +84,44 @@ class ItemReviewSerializer(serializers.ModelSerializer):
 
 
 class ItemsSerializer(serializers.ModelSerializer):
-    # item_category = serializers.IntegerField(source='item_category.id', read_only=True)
-    # item_room = serializers.IntegerField(source='item_category.room.id', read_only=True)
-    # photos = serializers.SerializerMethodField()
-    # hard_body = serializers.SerializerMethodField()
-    # soft_body = serializers.SerializerMethodField()
-    # discount = serializers.SerializerMethodField()
-    # rating = serializers.SerializerMethodField()
 
-    photo = ItemPhotoSerializer(many=True)
-    hard_body = ItemHardBodySerializer(many=True)
-    soft_body = ItemSoftBodySerializer(many=True)
-    discount = ItemDiscountSerializer(many=True)
-    review = ItemReviewSerializer(many=True)
+    photo = serializers.SerializerMethodField()
+    hard_body = serializers.SerializerMethodField()
+    soft_body = serializers.SerializerMethodField()
+    review = serializers.SerializerMethodField()
+    discount = serializers.SerializerMethodField()
+    room = serializers.SerializerMethodField()
 
+    def get_photo(self, obj):
+        data = ItemPhotoSerializer(obj.prefetched_photos, many=True).data
+        data = [p.get('photo') for p in data]
+        return data
+    def get_hard_body(self, obj):
+        data = ItemHardBodySerializer(obj.prefetched_hard_body, many=True).data
+        return data
+    def get_soft_body(self, obj):
+        data = ItemSoftBodySerializer(obj.prefetched_soft_body, many=True).data
+        return data
+    def get_review(self, obj):
+        data = ItemReviewSerializer(obj.prefetched_reviews, many=True).data
+        rate = [d.get('rating') for d in data]
+        rate = sum(rate) / len(rate)
+        rate = round(rate, 2)
+        return rate
+    def get_discount(self, obj):
+        price = obj.price
+        data = ItemDiscountSerializer(obj.prefetched_discounts, many=True).data
+        if len(data) != 0:
+            data = data[0]
+            discount_percent = data['discount_percent']
+            discount = price - (discount_percent / 100) * price
+            discount = round(discount, 2)
+        else:
+            discount = price
+        return discount
+
+    def get_room(self, obj):
+        return obj.item_category.room.id
     class Meta:
         model = Items
         fields = [
@@ -111,12 +135,13 @@ class ItemsSerializer(serializers.ModelSerializer):
             'colour',
             'avaliability',
             'in_stock',
+            'sold',
             'length',
             'width',
             'height',
             'form',
-            # 'item_category',
-            # 'item_room',
+            'item_category',
+            'room',
             'collection',
             'created_at',
             'is_published',
@@ -125,43 +150,3 @@ class ItemsSerializer(serializers.ModelSerializer):
             'photo'
         ]
 
-    # def get_photos(self, obj):
-    #     photos_qs = ItemPhoto.objects.filter(related_item=obj)
-    #     serializer = ItemPhotoSerializer(instance=photos_qs, many=True)
-    #     data_list = serializer.data
-    #     if len(data_list) != 0:
-    #         photos = [x.values() for x in data_list]
-    #     else:
-    #         photos = []
-    #     return photos
-    #
-    # def get_hard_body(self, obj):
-    #     hard_body = ItemHardBody.objects.filter(related_item=obj)
-    #     serializer = ItemHardBodySerializer(instance=hard_body, many=True)
-    #     return serializer.data
-    #
-    # def get_soft_body(self, obj):
-    #     soft_body = ItemSoftBody.objects.filter(related_item=obj)
-    #     serializer = ItemSoftBodySerializer(instance=soft_body, many=True)
-    #     return serializer.data
-    #
-    # def get_discount(self, obj):
-    #     item_price = Items.objects.filter(id=obj.id).values_list('price', flat=True)
-    #     item_price = item_price[0]
-    #     discount = ItemDiscount.objects.filter(related_item=obj)
-    #     serializer = ItemDiscountSerializer(instance=discount, many=True)
-    #     discount = serializer.data
-    #     if len(discount) != 0:
-    #         discount = discount[0]
-    #         discount = discount.get('discount_percent')
-    #         discounted_price = item_price - (item_price * (discount / 100))
-    #         discounted_price = float('{:.2f}'.format(discounted_price))
-    #     else:
-    #         discounted_price = item_price
-    #     return discounted_price
-    #
-    # def get_rating(self, obj):
-    #     rating = ItemReview.objects.filter(related_item=obj).aggregate(average_rating=Avg('rating'))
-    #     rating = rating['average_rating']
-    #     rating = float('{:.1f}'.format(rating))
-    #     return rating
