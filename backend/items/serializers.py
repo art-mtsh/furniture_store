@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from rest_framework import serializers
 from .models import *
 
@@ -68,13 +69,20 @@ class ItemDiscountSerializer(serializers.ModelSerializer):
         fields = ['related_item', 'discount_percent']
 
 
+class ItemReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemReview
+        fields = ['related_item', 'first_name', 'last_name', 'review', 'rating', 'review_usefulness_counter']
+
+
 class ItemsSerializer(serializers.ModelSerializer):
-    item_category_title = serializers.CharField(source='item_category.title', read_only=True)
-    item_room_title = serializers.CharField(source='item_category.room.title', read_only=True)
+    item_category = serializers.IntegerField(source='item_category.id', read_only=True)
+    item_room = serializers.IntegerField(source='item_category.room.id', read_only=True)
     photos = serializers.SerializerMethodField()
     hard_body = serializers.SerializerMethodField()
     soft_body = serializers.SerializerMethodField()
     discount = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Items
@@ -82,6 +90,8 @@ class ItemsSerializer(serializers.ModelSerializer):
             'id',
             'title',
             'price',
+            'discount',
+            'rating',
             'article_code',
             'description',
             'colour',
@@ -91,21 +101,20 @@ class ItemsSerializer(serializers.ModelSerializer):
             'width',
             'height',
             'form',
-            'item_category_title',
-            'item_room_title',
+            'item_category',
+            'item_room',
             'collection',
             'created_at',
             'is_published',
             'hard_body',
             'soft_body',
-            'photos',
-            'discount'
+            'photos'
         ]
 
     def get_photos(self, obj):
         photos_qs = ItemPhoto.objects.filter(related_item=obj)
         serializer = ItemPhotoSerializer(instance=photos_qs, many=True)
-        data_list  = serializer.data
+        data_list = serializer.data
         if len(data_list) != 0:
             photos = [x.values() for x in data_list]
         else:
@@ -132,11 +141,13 @@ class ItemsSerializer(serializers.ModelSerializer):
             discount = discount[0]
             discount = discount.get('discount_percent')
             discounted_price = item_price - (item_price * (discount / 100))
+            discounted_price = float('{:.2f}'.format(discounted_price))
         else:
             discounted_price = item_price
         return discounted_price
 
-class ItemReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ItemReview
-        fields = ['related_item', 'first_name', 'second_name', 'review', 'rating', 'review_usefulness_counter']
+    def get_rating(self, obj):
+        rating = ItemReview.objects.filter(related_item=obj).aggregate(average_rating=Avg('rating'))
+        rating = rating['average_rating']
+        rating = float('{:.1f}'.format(rating))
+        return rating

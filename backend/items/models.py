@@ -86,6 +86,7 @@ class Items(models.Model):
     colour = models.CharField(max_length=150, verbose_name='Колір', blank=True)
     avaliability = models.BooleanField(verbose_name='В наявності', default=True)
     in_stock = models.IntegerField(verbose_name='На складі', default=1)
+    sold = models.IntegerField(verbose_name='Продано одиниць', default=0)
 
     length = models.IntegerField(verbose_name='Довжина', blank=True)
     width = models.IntegerField(verbose_name='Висота', blank=True)
@@ -242,8 +243,8 @@ class ItemReview(models.Model):
     related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
 
     first_name = models.CharField(max_length=150, verbose_name="Ім'я", blank=False)
-    second_name = models.CharField(max_length=150, verbose_name='Прізвище', blank=False)
-    review = models.TextField(blank=True, verbose_name='Відгук')
+    last_name = models.CharField(max_length=150, verbose_name='Прізвище', blank=False)
+    review = models.TextField(blank=True, null=True, verbose_name='Відгук')
     rating = models.IntegerField(verbose_name='Оцінка товару', blank=False, validators=[validate_even])
     review_usefulness_counter = models.IntegerField(verbose_name='Корисність відгуку', default=0)
 
@@ -271,4 +272,6 @@ class ItemDiscount(models.Model):
         verbose_name = "Знижка"
         verbose_name_plural = "Знижка"
         ordering = ['related_item']
+
+
 
