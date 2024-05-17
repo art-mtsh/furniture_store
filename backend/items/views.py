@@ -13,7 +13,7 @@ ratelimit_m = '10/m'
 
 
 class ItemRoomTypeView(generics.ListCreateAPIView):
-    queryset = ItemRoomType.objects.all().order_by('id')
+    queryset = ItemRoomType.objects.all().order_by('id').prefetch_related('itemcategory_set')
     serializer_class = RoomTypeSerializer
 
     try:
@@ -57,11 +57,30 @@ class ItemsView(generics.ListCreateAPIView):
     def get_queryset(self):
         cat_id = self.kwargs.get('cat_id')
         if cat_id is not None:
-            obj = Items.objects.filter(item_category_id=cat_id).order_by('id')
+            obj = Items.objects.filter(item_category_id=cat_id).order_by('id').prefetch_related(
+        'photo',
+        'hard_body',
+        'soft_body',
+        'discount',
+        'review'
+    )
+            # obj = Items.objects.filter(item_category_id=cat_id).prefetch_related(
+            #     Prefetch('photo', queryset=ItemPhoto.objects.distinct()),
+            #     Prefetch('hard_body', queryset=ItemHardBody.objects.distinct()),
+            #     Prefetch('soft_body', queryset=ItemSoftBody.objects.distinct()),
+            #     Prefetch('discount', queryset=ItemDiscount.objects.distinct()),
+            #     Prefetch('review', queryset=ItemReview.objects.distinct())
+            # )
             if not obj:
                 raise Http404('Items not found.')
             return obj
-        return Items.objects.all().order_by('id')
+        return Items.objects.all().prefetch_related(
+        'photo',
+        'hard_body',
+        'soft_body',
+        'discount',
+        'review'
+    )
 
     try:
         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
@@ -102,18 +121,3 @@ class ItemsSearchView(generics.ListAPIView):
             raise Http404('Items not found.')
 
         return queryset
-
-
-class ItemPhotoUploadView(generics.ListCreateAPIView):
-
-    serializer_class = ItemPhotoSerializer
-    queryset = ItemPhoto.objects.all().order_by('id')
-
-    # def post(self, request, format=None):
-    #     serializer = ItemPhotoSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return HttpResponse(content=serializer.data, status=201)
-    #         # return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    #     return HttpResponse(content=serializer.data, status=400)

@@ -7,5 +7,4 @@ urlpatterns = [
     path('room/category/<int:cat_id>/', ItemsView.as_view(), name='items_by_category'),
     path('room/category/items/', ItemsView.as_view(), name='all_items'),
     path('room/category/items/search/', ItemsSearchView.as_view(), name='search_items'),
-    path('upload/', ItemPhotoUploadView.as_view(), name='itemphoto-upload')
 ]
