@@ -150,7 +150,7 @@ class ItemHardBody(models.Model):
     """
     Матеріали корпусу.
     """
-    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
+    related_item = models.ForeignKey(Items, related_name='hard_body',  verbose_name='Товар', on_delete=models.CASCADE)
 
     body_material = models.ForeignKey(ItemMaterials, verbose_name='Корпус', on_delete=models.SET_NULL, null=True, related_name='body_material')
     facade_material = models.ForeignKey(ItemMaterials, verbose_name='Фасад', on_delete=models.SET_NULL, null=True, related_name='facade_material')
@@ -170,7 +170,7 @@ class ItemSoftBody(models.Model):
     """
     М'які матеріали.
     """
-    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
+    related_item = models.ForeignKey(Items, related_name='soft_body',  verbose_name='Товар', on_delete=models.CASCADE)
 
     sleep_place = models.CharField(max_length=100, verbose_name='Спальне місце', null=True)
     sleep_size = models.CharField(max_length=100, verbose_name='Спальне місце ДхШ', null=True)
@@ -219,7 +219,7 @@ class ItemPhoto(models.Model):
         return path
 
 
-    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
+    related_item = models.ForeignKey(Items, related_name='photo', verbose_name='Товар', on_delete=models.CASCADE)
     photo = models.ImageField(upload_to=item_photo_upload_path, verbose_name="Фото товару", blank=True)
 
     class Meta:
@@ -240,7 +240,7 @@ class ItemReview(models.Model):
     """
     Відгуки про товар.
     """
-    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
+    related_item = models.ForeignKey(Items, related_name='review',  verbose_name='Товар', on_delete=models.CASCADE)
 
     first_name = models.CharField(max_length=150, verbose_name="Ім'я", blank=False)
     last_name = models.CharField(max_length=150, verbose_name='Прізвище', blank=False)
@@ -261,7 +261,7 @@ class ItemDiscount(models.Model):
     """
     Знижки на товари.
     """
-    related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
+    related_item = models.ForeignKey(Items, related_name='discount',  verbose_name='Товар', on_delete=models.CASCADE)
     discount_percent = models.IntegerField(verbose_name="Знижка, %")
 
     # def __str__(self):

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'items',
     'users',
+    'debug_toolbar',
 ]
 # заголовки для CORS => corsheaders
 # як і MIDDLEWARE corsheaders.middleware.CorsMiddleware:
@@ -61,7 +62,11 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+INTERNAL_IPS = [
+    '127.0.0.1',
 ]
 
 # шукає глобальну змінну 'ENVIRONMENT', якщо її нема встановлює 'development'
