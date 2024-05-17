@@ -56,10 +56,8 @@ class ItemsView(generics.ListCreateAPIView):
     def get_queryset(self):
         cat_id = self.kwargs.get('cat_id')
 
-        # queryset = Items.objects.all().select_related('item_category').prefetch_related('photo', 'hard_body', 'soft_body', 'review')
         queryset = Items.objects.all().select_related(
-            'item_category__room'  # Prefetch item_category.room in a single query
-        ).prefetch_related(
+            'item_category__room').prefetch_related(
             Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
             Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
             Prefetch('soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
@@ -86,7 +84,19 @@ class ItemsBestsellers(generics.ListAPIView):
     serializer_class = ItemsSerializer
 
     def get_queryset(self):
-        return Items.objects.order_by('-sold')[:50].prefetch_related('photo', 'hard_body', 'soft_body', 'discount', 'review')
+        cat_id = self.kwargs.get('cat_id')
+
+        queryset = Items.objects.order_by('-sold')[:50].select_related(
+            'item_category__room').prefetch_related(
+            Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
+            Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
+            Prefetch('soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
+            Prefetch('review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
+            Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
+
+        if cat_id is not None:
+            queryset = queryset.filter(item_category_id=cat_id)
+        return queryset
 
 
 class ItemsSearchView(generics.ListAPIView):
