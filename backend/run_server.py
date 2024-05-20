@@ -14,10 +14,10 @@ def set_environment():
     if platform.node() == "DESKTOP-5PMV5U1":
 
         os.environ['ENVIRONMENT'] = 'development'
-        os.environ['IP_ADDRESS'] = '127.0.0.1:8000'
+        os.environ['IP_ADDRESS'] = '127.0.0.1:443'
     else:
         os.environ['ENVIRONMENT'] = 'production'
-        os.environ['IP_ADDRESS'] = '0.0.0.0:8000'
+        os.environ['IP_ADDRESS'] = '0.0.0.0:443'
 
 
 def main():
@@ -37,8 +37,9 @@ def main():
     call_command("makemigrations")
     call_command("migrate")
 
-    IP_ADDRESS = os.environ.get('IP_ADDRESS', '127.0.0.1:8000')
+    IP_ADDRESS = os.environ.get('IP_ADDRESS', '127.0.0.1:443')
     call_command("runserver", [IP_ADDRESS, "--noreload"])
+    call_command("runserver", [IP_ADDRESS, "--cert dev_ssl.crt --key dev_ssl.key"])
 
 
 if __name__ == "__main__":
