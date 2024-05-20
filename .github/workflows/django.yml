@@ -18,8 +18,9 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install build-essential
-        run: sudo apt-get install build-essential -y
+      - name: Install build-essential and python3.10-dev
+        run: |
+          sudo apt-get install build-essential python3.10-dev -y
 
       - name: Install dependencies
         run: |
@@ -32,7 +33,7 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           flake8 --exclude=venv/ --count --select=E9,F63,F7,F82 --show-source --statistics
-          
+
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 --exclude=venv/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         shell: bash
@@ -42,6 +43,7 @@ jobs:
       #     cd backend
       #     DJANGO_SETTINGS_MODULE=backend.settings pytest
       #   shell: bash
+
 
   docker:
     runs-on: ubuntu-latest
