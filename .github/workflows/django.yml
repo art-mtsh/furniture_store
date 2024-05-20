@@ -66,6 +66,10 @@ jobs:
     runs-on: self-hosted
     needs: docker
     steps:
+
+      - name: Copy SSL Certificate to Build Context
+        run: cp /usr/local/share/ca-certificates/dev_ssl.crt $GITHUB_WORKSPACE/dev_ssl.crt
+
       - name: Stop and remove containers and images (if any)
         run: |
           docker stop $(docker ps -a -q) || true

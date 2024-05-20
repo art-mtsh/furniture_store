@@ -16,8 +16,13 @@ WORKDIR app
 # Install dependencies
 RUN pip install -r requirements.txt
 
+# Copy SSL certificate
+COPY dev_ssl.crt /usr/local/share/ca-certificates/dev_ssl.crt
+RUN update-ca-certificates
+
 # Expose port 8000
-EXPOSE 8000
+# EXPOSE 8000
+EXPOSE 443
 
 # Run the Django development server
 CMD ["python", "backend/run_server.py"]
