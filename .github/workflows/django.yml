@@ -86,4 +86,4 @@ jobs:
         run: docker pull artmtsh/store_backend:latest
 
       - name: Run new container
-        run: docker run -d -p 8000:8000 --name store_backend_container artmtsh/store_backend:latest
+        run: docker run -d -p 443:443 --name store_backend_container artmtsh/store_backend:latest
