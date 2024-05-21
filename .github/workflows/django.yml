@@ -3,6 +3,8 @@
 on:
   push:
     branches: [ "main" ]
+  push:
+    branches: [ "dev" ]
 
 permissions:
   contents: read
@@ -72,8 +74,8 @@ jobs:
     needs: docker
     steps:
 
-      - name: Copy SSL Certificate to Build Context
-        run: cp /usr/local/share/ca-certificates/dev_ssl.crt $GITHUB_WORKSPACE/dev_ssl.crt
+#      - name: Copy SSL Certificate to Build Context
+#        run: cp /dev_ssl.crt $GITHUB_WORKSPACE/dev_ssl.crt
 
       - name: Stop and remove containers and images (if any)
         run: |
@@ -86,4 +88,4 @@ jobs:
         run: docker pull artmtsh/store_backend:latest
 
       - name: Run new container
-        run: docker run -d -p 8000:8000 --name store_backend_container artmtsh/store_backend:latest
+        run: docker run -d -p 443:443 --name store_backend_container artmtsh/store_backend:latest
