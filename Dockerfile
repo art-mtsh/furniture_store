@@ -28,6 +28,7 @@ RUN update-ca-certificates
 # EXPOSE 8000
 # EXPOSE 443
 
+
 # Run the Django development server
 # CMD ["python", "backend/run_server.py"]
 
