@@ -109,7 +109,7 @@ class ItemPhotoAdmin(admin.ModelAdmin):
 
 
 class ItemReviewAdmin(admin.ModelAdmin):
-    list_display = ('id', 'related_item', 'first_name', 'second_name', 'rating', 'review_usefulness_counter',)
+    list_display = ('id', 'related_item', 'first_name', 'last_name', 'rating', 'review_usefulness_counter',)
     list_display_links = ('related_item',)
     search_fields = ('related_item', 'rating',)
     # list_editable = ('related_item', 'rating',)
