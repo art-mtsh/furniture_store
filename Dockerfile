@@ -43,6 +43,9 @@ RUN pip install -r requirements.txt
 # Stage 2: Build Nginx with Django app
 FROM nginx:alpine
 
+# Remove default nginx.conf
+RUN rm /etc/nginx/nginx.conf
+
 # Copy the Nginx configuration file
 COPY /etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
