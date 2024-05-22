@@ -47,7 +47,7 @@ FROM nginx:alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy SSL certificates
-COPY certs /etc/nginx/certs
+COPY /certs /etc/nginx/certs
 
 # Copy Django app from builder stage
 COPY --from=builder /app /app
