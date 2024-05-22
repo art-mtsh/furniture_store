@@ -124,6 +124,3 @@ jobs:
 
           networks:
             mynetwork:
-
-          EOF
-          docker-compose up -d
