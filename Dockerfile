@@ -13,11 +13,8 @@ COPY . app
 # Set the working directory in the container
 WORKDIR app
 
-
 # Install dependencies
-COPY /requirements.txt
-RUN pip install -r requirements.txt
-
+RUN pip install -r app/requirements.txt
 
 # Expose port 8000
 EXPOSE 80
