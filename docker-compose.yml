@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  web:
+    image: artmtsh/store_backend:latest
+    expose:
+      - "8000"
+    networks:
+      - mynetwork
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt/live/furnishop-back.pp.ua:/etc/nginx/certs
+    depends_on:
+      - web
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:

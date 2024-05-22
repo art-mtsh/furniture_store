@@ -74,18 +74,23 @@ jobs:
     needs: docker
     steps:
 
-#      - name: Copy SSL Certificate to Build Context
-#        run: cp /dev_ssl.crt $GITHUB_WORKSPACE/dev_ssl.crt
+#      - name: Stop and remove containers and images (if any)
+#        run: |
+#          docker stop $(docker ps -a -q) || true
+#          docker remove $(docker ps -a -q) || true
+#          docker rmi -f $(docker images -aq) || true
+#        continue-on-error: true
 
       - name: Stop and remove containers and images (if any)
         run: |
-          docker stop $(docker ps -a -q) || true
-          docker remove $(docker ps -a -q) || true
-          docker rmi -f $(docker images -aq) || true
+          docker-compose down || true
         continue-on-error: true
 
       - name: Pull latest image from Docker Hub
         run: docker pull artmtsh/store_backend:latest
 
-      - name: Run new container
-        run: docker run -d -p 80:80 --name store_backend_container artmtsh/store_backend:latest
+#      - name: Run new container
+#        run: docker run -d -p 80:80 --name store_backend_container artmtsh/store_backend:latest
+
+      - name: Deploy with Docker Compose
+        run: docker-compose up -d
