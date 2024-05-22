@@ -44,10 +44,10 @@ RUN pip install -r requirements.txt
 FROM nginx:alpine
 
 # Copy the Nginx configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY /etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Copy SSL certificates
-COPY /certs /etc/nginx/certs
+COPY /etc/nginx/certs /etc/nginx/certs
 
 # Copy Django app from builder stage
 COPY --from=builder /app /app
