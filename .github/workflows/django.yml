@@ -115,8 +115,8 @@ jobs:
                 - "80:80"
                 - "443:443"
               volumes:
-                - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf
-                - /etc/nginx/certs:/etc/nginx/certs
+                - app/etc/nginx/nginx.conf:app/etc/nginx/nginx.conf
+                - app/etc/nginx/certs:app/etc/nginx/certs
               depends_on:
                 - web
               networks:
