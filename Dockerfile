@@ -27,6 +27,7 @@ FROM python:3.10-alpine as builder
 
 # Install build dependencies
 RUN apk add --no-cache gcc musl-dev postgresql-dev
+RUN apk add --no-cache python3
 
 # Set working directory
 WORKDIR /app
