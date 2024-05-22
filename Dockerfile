@@ -52,8 +52,6 @@ COPY /etc/nginx/nginx.conf /etc/nginx/nginx.conf
 # Copy SSL certificates
 COPY /etc/nginx/certs /etc/nginx/certs
 
-COPY /docker-compose.yml /docker-compose.yml
-
 # Copy Django app from builder stage
 COPY --from=builder /app /app
 
