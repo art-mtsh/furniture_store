@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'items',
     'users',
     'debug_toolbar',
-    'sslserver',
 ]
 # заголовки для CORS => corsheaders
 # як і MIDDLEWARE corsheaders.middleware.CorsMiddleware:
@@ -108,20 +107,6 @@ CORS_ALLOW_METHODS = [
 
 ROOT_URLCONF = 'backend.urls'
 
-# Security settings
-# SECURE_SSL_REDIRECT = True
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Cookie settings
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-
-# Set secure HSTS header
-# SECURE_HSTS_SECONDS = 3600
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
-
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -138,22 +123,7 @@ TEMPLATES = [
     },
 ]
 
-# SSL SECTION:
-# SECURE_SSL_REDIRECT = False
-# SECURE_HSTS_SECONDS = 3600
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# SECURE_BROWSER_XSS_FILTER = True
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-
-# Serve SSL in development
-# os.environ['DJANGO_SETTINGS_MODULE'] = 'backend.settings.development'
-
-# Paths to your certificate files
-SSL_CERTIFICATE = os.path.join(BASE_DIR, 'certs', 'dev_ssl.crt')
-SSL_KEY = os.path.join(BASE_DIR, 'certs', 'dev_ssl.key')
+SECURE_SSL_REDIRECT = True
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
@@ -222,5 +192,3 @@ DEFAULT_FILE_STORAGE = 'backend.gcloud.GoogleCloudMediaFileStorage'
 GS_PROJECT_ID = os.getenv('GS_PROJECT_ID')
 GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME')
 MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
-
-

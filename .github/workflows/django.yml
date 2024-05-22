@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ "main" ]
   push:
-    branches: [ "main_branch1", "main_branch2" ]
+    branches: [ "main", "main_branch1", "main_branch2" ]
 
 permissions:
   contents: read
@@ -63,7 +63,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_SECRET }}
 
-      - name: Build and push
+      - name: Build and push django
         uses: docker/build-push-action@v5
         with:
           push: true
@@ -81,8 +81,18 @@ jobs:
           docker rmi -f $(docker images -aq) || true
         continue-on-error: true
 
+
       - name: Pull latest image from Docker Hub
         run: docker pull artmtsh/store_backend:latest
 
-      - name: Run new container
-        run: docker run -d -p 8000:8000 --name store_backend_container artmtsh/store_backend:latest
+      # Step to create a Docker network
+      - name: Create Docker network
+        run: docker network create my_network
+
+      # Step to run Django container
+      - name: Run Django container
+        run: docker run -d --network my_network --name django_container my_django_app
+
+      # Step to run Nginx container
+      - name: Run Nginx container
+        run: docker run -d --network my_network -p 80:80 --name nginx_container my_nginx_server

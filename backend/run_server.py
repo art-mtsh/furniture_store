@@ -4,20 +4,20 @@ import django
 import platform
 from django.core.management import call_command
 
-
 def set_environment():
     """
     Визначаємо де ми знаходимось
     :return: "development" or "production"
     """
 
+
     if platform.node() == "DESKTOP-5PMV5U1":
 
         os.environ['ENVIRONMENT'] = 'development'
-        os.environ['IP_ADDRESS'] = '127.0.0.1:443'
+        os.environ['IP_ADDRESS'] = f'127.0.0.1:80'
     else:
         os.environ['ENVIRONMENT'] = 'production'
-        os.environ['IP_ADDRESS'] = '0.0.0.0:443'
+        os.environ['IP_ADDRESS'] = f'0.0.0.0:80'
 
 
 def main():
@@ -37,9 +37,8 @@ def main():
     call_command("makemigrations")
     call_command("migrate")
 
-    IP_ADDRESS = os.environ.get('IP_ADDRESS', '127.0.0.1:443')
+    IP_ADDRESS = os.environ.get('IP_ADDRESS')
     call_command("runserver", [IP_ADDRESS, "--noreload"])
-    call_command("runserver", [IP_ADDRESS, "--cert dev_ssl.crt --key dev_ssl.key"])
 
 
 if __name__ == "__main__":
