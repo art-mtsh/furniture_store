@@ -93,7 +93,10 @@ jobs:
 #      - name: Run new container
 #        run: docker run -d -p 80:80 --name store_backend_container artmtsh/store_backend:latest
 
+      - name: List directory contents
+        run: ls -la
+
       - name: Deploy with Docker Compose
         run: |
-          cd $GITHUB_WORKSPACE  # Navigate to the GitHub workspace directory
+          cd $GITHUB_WORKSPACE
           docker-compose up -d
