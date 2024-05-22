@@ -123,7 +123,7 @@ TEMPLATES = [
     },
 ]
 
-SECURE_SSL_REDIRECT = True
+# SECURE_SSL_REDIRECT = True
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
