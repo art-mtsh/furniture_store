@@ -67,7 +67,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          file: Dockerfile
           push: true
           tags: artmtsh/store_backend:latest
 
@@ -75,7 +75,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.nginx
+          file: Dockerfile.nginx
           push: true
           tags: artmtsh/store_nginx:latest
 
