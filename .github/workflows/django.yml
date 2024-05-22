@@ -4,45 +4,95 @@ on:
   pull_request:
     branches: [ "main" ]
   push:
-    branches: [ "main_branch1", "main_branch2" ]
+    branches: [ "main", "main_branch1", "main_branch2" ]
 
 permissions:
   contents: read
 
-
-
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Build and push Django backend image
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Install build-essential and python3.10-dev
+        run: |
+          sudo apt-get install build-essential python3.10-dev -y
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        shell: bash
+
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 --exclude=venv/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 --exclude=venv/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        shell: bash
+
+      # - name: Test with pytest
+      #   run: |
+      #     cd backend
+      #     DJANGO_SETTINGS_MODULE=backend.settings pytest
+      #   shell: bash
+
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_SECRET }}
+
+      - name: Build and push django
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
-          dockerfile: Dockerfile
           push: true
           tags: artmtsh/store_backend:latest
 
-      - name: Build and push Nginx image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./nginx
-          dockerfile: Dockerfile
-          push: true
-          tags: artmtsh/nginx_backend:latest
+  deploy:
+    runs-on: self-hosted
+    needs: docker
+    steps:
 
-      - name: SSH into EC2 instance and deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
-            docker pull artmtsh/store_backend:latest
-            docker pull artmtsh/nginx_backend:latest
-            docker run -d -p 8000:8000 --name store_backend_container artmtsh/store_backend:latest
-            docker run -d -p 80:80 -p 443:443 --name nginx_container --link store_backend_container:web artmtsh/nginx_backend:latest
+      - name: Stop and remove containers and images (if any)
+        run: |
+          docker stop $(docker ps -a -q) || true
+          docker remove $(docker ps -a -q) || true
+          docker rmi -f $(docker images -aq) || true
+        continue-on-error: true
+
+
+      - name: Pull latest image from Docker Hub
+        run: docker pull artmtsh/store_backend:latest
+
+      # Step to create a Docker network
+      - name: Create Docker network
+        run: docker network create my_network
+
+      # Step to run Django container
+      - name: Run Django container
+        run: docker run -d --network my_network --name django_container my_django_app
+
+      # Step to run Nginx container
+      - name: Run Nginx container
+        run: docker run -d --network my_network -p 80:80 --name nginx_container my_nginx_server
