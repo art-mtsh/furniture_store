@@ -25,7 +25,7 @@ RUN pip install -r requirements.txt
 # RUN update-ca-certificates
 
 # Expose port 8000
-EXPOSE 8000
+EXPOSE 80
 # EXPOSE 443
 
 
