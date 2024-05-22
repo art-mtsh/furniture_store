@@ -63,11 +63,21 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_SECRET }}
 
-      - name: Build and push
+      - name: Build and push Django app
         uses: docker/build-push-action@v5
         with:
+          context: .
+          file: ./Dockerfile
           push: true
           tags: artmtsh/store_backend:latest
+
+      - name: Build and push Nginx
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.nginx
+          push: true
+          tags: artmtsh/store_nginx:latest
 
   deploy:
     runs-on: self-hosted
@@ -81,8 +91,18 @@ jobs:
           docker rmi -f $(docker images -aq) || true
         continue-on-error: true
 
-      - name: Pull latest image from Docker Hub
-        run: docker pull artmtsh/store_backend:latest
+#      - name: Pull latest image from Docker Hub
+#        run: docker pull artmtsh/store_backend:latest
+#
+#      - name: Run new container
+#        run: docker run -d -p 8000:8000 --name store_backend_container artmtsh/store_backend:latest
 
-      - name: Run new container
-        run: docker run -d -p 80:80 --name store_backend_container artmtsh/store_backend:latest
+      - name: Pull latest images from Docker Hub
+        run: |
+          docker pull artmtsh/store_backend:latest
+          docker pull artmtsh/store_nginx:latest
+
+      - name: Run containers
+        run: |
+          docker-compose down || true
+          docker-compose up -d

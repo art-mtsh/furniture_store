@@ -1,0 +1,16 @@
+# Use an official Nginx image
+FROM nginx:latest
+
+# Remove the default configuration file
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy custom Nginx configuration file to the container
+COPY nginx.conf /etc/nginx/conf.d/
+
+# Copy SSL certificates to the container
+COPY fullchain.pem /etc/ssl/certs/
+COPY privkey.pem /etc/ssl/private/
+
+# Expose port 80 and 443
+EXPOSE 80
+EXPOSE 443
