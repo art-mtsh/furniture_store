@@ -16,8 +16,8 @@ WORKDIR app
 # Install dependencies
 RUN pip install -r app/requirements.txt
 
-# Expose port 8000
-EXPOSE 80
+# Expose port 80
+EXPOSE 8000
 
 # Run the Django development server
 CMD ["python", "backend/run_server.py"]
