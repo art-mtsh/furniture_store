@@ -28,14 +28,14 @@ FROM python:3.10-alpine as builder
 # Install build dependencies
 RUN apk add --no-cache gcc musl-dev postgresql-dev
 
-# Install psycopg2
-RUN pip install psycopg2
-
 # Set working directory
 WORKDIR /app
 
 # Copy the entire project directory into the container
 COPY . /app
+
+# Install psycopg2
+RUN pip install psycopg2
 
 # Install Python dependencies
 RUN pip install -r requirements.txt
@@ -43,20 +43,8 @@ RUN pip install -r requirements.txt
 # Stage 2: Build Nginx with Django app
 FROM nginx:alpine
 
-# Remove default nginx.conf
-RUN rm /etc/nginx/nginx.conf
-
-# Copy the Nginx configuration file
-COPY /etc/nginx/nginx.conf /etc/nginx/nginx.conf
-
-# Copy SSL certificates
-COPY /etc/nginx/certs /etc/nginx/certs
-
 # Copy Django app from builder stage
 COPY --from=builder /app /app
-
-# Set working directory
-WORKDIR /app
 
 # Expose ports
 EXPOSE 80 443
