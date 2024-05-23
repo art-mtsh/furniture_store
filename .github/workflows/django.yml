@@ -89,9 +89,6 @@ jobs:
     runs-on: self-hosted
     needs: docker
     steps:
-      -
-      - name: Check out repository
-        uses: actions/checkout@v3
 
       - name: Stop and remove containers and images (if any)
         run: |
