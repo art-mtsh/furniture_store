@@ -51,6 +51,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: List files in repository
+        run: ls -al
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -67,7 +73,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.django
+          dockerfile: ./Dockerfile.django
           push: true
           tags: artmtsh/store_backend:latest
 
@@ -75,7 +81,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.nginx
+          dockerfile: ./Dockerfile.nginx
           push: true
           tags: artmtsh/store_nginx:latest
 
