@@ -86,7 +86,7 @@ class ItemsBestsellers(generics.ListAPIView):
     def get_queryset(self):
         cat_id = self.kwargs.get('cat_id')
 
-        queryset = Items.objects.order_by('-sold')[:50].select_related(
+        queryset = Items.objects.order_by('-sold')[:10].select_related(
             'item_category__room').prefetch_related(
             Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
             Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
