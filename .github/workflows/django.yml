@@ -108,6 +108,9 @@ jobs:
           docker pull artmtsh/store_backend:latest
           docker pull artmtsh/store_nginx:latest
 
+      - name: List files in repository
+        run: ls -al
+
       - name: Start containers
         run: |
           docker-compose up -d --build
