@@ -19,8 +19,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Expose port 8000
 EXPOSE 8000
 
-# Run the Django development server
-# CMD ["python", "backend/run_server.py"]
 
 # Run the Django development server
-CMD ["python", "backend/manage.py", "runserver", "127.0.0.1:8000"]
+CMD ["python", "backend/manage.py", "runserver", "0.0.0.0:8000"]
