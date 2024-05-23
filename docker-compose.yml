@@ -2,6 +2,7 @@ version: '3'
 
 services:
   django_app:
+
     build:
       context: .
       dockerfile: Dockerfile.django
@@ -19,6 +20,10 @@ services:
       - "443:443"
     depends_on:
       - django_app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./fullchain.pem:/etc/nginx/fullchain.pem:ro
+      - ./privkey.pem:/etc/nginx/privkey.pem:ro
 
 volumes:
   postgres_data:
