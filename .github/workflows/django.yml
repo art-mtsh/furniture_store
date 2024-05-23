@@ -115,6 +115,9 @@ jobs:
         run: |
           docker run -d --name django_app -p 8000:8000 store_backend:latest
 
+      - name: Wait for Django container to be ready
+        run: docker inspect --format='{{json .State}}' django_app | jq '.Running' | grep -q true
+
       - name: Build Nginx container
         run: |
           docker build -t store_nginx:latest -f Dockerfile.nginx .
