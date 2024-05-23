@@ -101,6 +101,7 @@ jobs:
           docker rmi -f $(docker images -aq) || true
         continue-on-error: true
 
+
 #      - name: Pull latest image from Docker Hub
 #        run: docker pull artmtsh/store_backend:latest
 #
