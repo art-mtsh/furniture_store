@@ -89,6 +89,11 @@ jobs:
     runs-on: self-hosted
     needs: docker
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: List files in repository
+        run: ls -al
 
       - name: Stop and remove containers and images (if any)
         run: |
@@ -103,14 +108,23 @@ jobs:
 #      - name: Run new container
 #        run: docker run -d -p 8000:8000 --name store_backend_container artmtsh/store_backend:latest
 
-      - name: Pull latest images from Docker Hub
+      - name: Build Django container
         run: |
-          docker pull artmtsh/store_backend:latest
-          docker pull artmtsh/store_nginx:latest
+          docker build -t store_backend:latest -f Dockerfile.django .
 
-      - name: List files in repository
-        run: ls -al
-
-      - name: Start containers
+      - name: Run Django container
         run: |
-          docker-compose up -d --build
+          docker run -d --name django_app -p 8000:8000 store_backend:latest
+
+      - name: Build Nginx container
+        run: |
+          docker build -t store_nginx:latest -f Dockerfile.nginx .
+
+      - name: Run Nginx container
+        run: |
+          docker run -d --name nginx -p 80:80 -p 443:443 \
+          --link django_app:django_app \
+          -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf:ro \
+          -v $(pwd)/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro \
+          -v $(pwd)/privkey.pem:/etc/ssl/private/privkey.pem:ro \
+          store_nginx:latest

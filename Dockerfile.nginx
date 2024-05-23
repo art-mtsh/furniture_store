@@ -7,8 +7,9 @@ RUN rm /etc/nginx/conf.d/default.conf
 # Copy custom Nginx configuration file to the container
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# The SSL certificates are mounted as volumes
-# No need to COPY them inside the Dockerfile
+# Copy SSL certificates to the container
+COPY fullchain.pem /etc/ssl/certs/fullchain.pem
+COPY privkey.pem /etc/ssl/private/privkey.pem
 
 # Expose port 80 and 443
 EXPOSE 80
