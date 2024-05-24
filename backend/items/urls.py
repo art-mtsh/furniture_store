@@ -6,6 +6,7 @@ urlpatterns = [
     path('room/<int:room_id>', ItemCategoryView.as_view(), name='categories_by_room'),
     path('room/category/<int:cat_id>/', ItemsView.as_view(), name='items_by_category'),
     path('room/category/items/', ItemsView.as_view(), name='all_items'),
-    path('room/category/items/bestsellers', ItemsBestsellers.as_view(), name='bestsellers'),
+    path('room/category/items/bestsellers', ItemsBestsellersView.as_view(), name='bestsellers'),
+    path('room/category/items/sales', ItemsSalesView.as_view(), name='sales'),
     path('room/category/items/search/', ItemsSearchView.as_view(), name='search_items'),
 ]

@@ -6,7 +6,7 @@ from .serializers import *
 
 from brake.decorators import ratelimit
 from sematext import log_engine
-from django.db.models import Q, Prefetch
+from django.db.models import Q, Prefetch, OuterRef, Subquery
 
 ratelimit_m = '10/m'
 
@@ -80,12 +80,10 @@ class ItemsView(generics.ListCreateAPIView):
         log_engine.error("An error occurred: %s", str(e), exc_info=True)
 
 
-class ItemsBestsellers(generics.ListAPIView):
+class ItemsBestsellersView(generics.ListAPIView):
     serializer_class = ItemsSerializer
 
     def get_queryset(self):
-        cat_id = self.kwargs.get('cat_id')
-
         queryset = Items.objects.order_by('-sold')[:10].select_related(
             'item_category__room').prefetch_related(
             Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
@@ -94,8 +92,21 @@ class ItemsBestsellers(generics.ListAPIView):
             Prefetch('review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
             Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
 
-        if cat_id is not None:
-            queryset = queryset.filter(item_category_id=cat_id)
+        return queryset
+
+
+class ItemsSalesView(generics.ListAPIView):
+    serializer_class = ItemsSerializer
+
+    def get_queryset(self):
+        discount_subquery = ItemDiscount.objects.filter(discount_percent__gte=20).values_list('related_item', flat=True)[:10]
+
+        queryset = Items.objects.filter(id__in=discount_subquery).order_by('id').select_related('item_category__room').prefetch_related(
+            Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
+            Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
+            Prefetch('soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
+            Prefetch('review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
+            Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
         return queryset
 
 
