@@ -120,4 +120,4 @@ class ItemsSearchView(generics.ListAPIView):
         Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
     serializer_class = ItemsSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title' , 'item_category__title', 'article_code', 'collection__title', 'description']
+    search_fields = ['title' , 'item_category__title', 'item_category__room__title', 'article_code', 'collection__title', 'collection__manufacturer__title', 'description']
