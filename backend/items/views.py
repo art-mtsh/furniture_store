@@ -1,6 +1,6 @@
 from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
-from rest_framework import generics
+from rest_framework import generics, filters
 
 from .serializers import *
 
@@ -111,29 +111,13 @@ class ItemsSalesView(generics.ListAPIView):
 
 
 class ItemsSearchView(generics.ListAPIView):
+    queryset = Items.objects.all().select_related(
+        'item_category__room').prefetch_related(
+        Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
+        Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
+        Prefetch('soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
+        Prefetch('review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
+        Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
     serializer_class = ItemsSerializer
-
-    def get_queryset(self):
-        search_query = self.request.query_params.get('text', None)
-
-        queryset = Items.objects.all().order_by('id')
-
-        search_terms = search_query.split('+')
-
-        q_objects = [
-            Q(title__icontains=term) | Q(article_code__icontains=term) | Q(item_category__title__icontains=term) | Q(item_category__room__title__icontains=term)
-            for term in search_terms
-        ]
-
-        if search_query:
-            queryset = Items.objects.filter(
-                models.Q(title__icontains=search_query) |
-                models.Q(article_code__icontains=search_query) |
-                models.Q(item_category__title__icontains=search_query) |
-                models.Q(item_category__room__title__icontains=search_query)
-            ).order_by('id')
-
-        if not queryset.exists():
-            raise Http404('Items not found.')
-
-        return queryset
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title' , 'item_category__title', 'article_code', 'collection__title', 'description']
