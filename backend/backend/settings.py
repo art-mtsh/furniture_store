@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'items',
     'users',
+    'orders',
     'debug_toolbar',
 ]
 # заголовки для CORS => corsheaders
