@@ -69,6 +69,7 @@ class UserFavoritesView(APIView):
 
     def get(self, request):
         user = request.user
+
         user_favorites = UserFavorites.objects.filter(related_user=user).select_related(
             'related_item__item_category__room'
         ).prefetch_related(
@@ -78,6 +79,9 @@ class UserFavoritesView(APIView):
             Prefetch('related_item__review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
             Prefetch('related_item__discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts')
         )
+
+        if not user_favorites.exists():
+            return JsonResponse({'message': 'Favorites not found'}, status=404)
 
         items = [favorite.related_item for favorite in user_favorites]
         serializer = ItemsSerializer(items, many=True, context={'request': request})
@@ -103,23 +107,3 @@ class UserFavoritesView(APIView):
         except UserFavorites.DoesNotExist:
             return JsonResponse({'message': f'Favorite with id={related_item_id} not found'}, status=404)
 
-
-    # def post(self, request):
-    #
-        # user = request.user
-        # try:
-        #     user_bio = UserFavorites.objects.get(related_user=user)
-        #     serializer = UserFavoritesSerializer(user_bio, data=request.data, partial=True, context={'request': request})
-        # except UserFavorites.DoesNotExist:
-        #     # Create a new UserFavorites object
-        #     serializer = UserFavoritesSerializer(data=request.data, context={'request': request})
-        #     if serializer.is_valid():
-        #         # Manually set the related_user before saving
-        #         serializer.save(related_user=user)
-        #         return JsonResponse(serializer.data, status=201)  # 201 Created
-        # else:
-        #     if serializer.is_valid():
-        #         serializer.save()
-        #         return JsonResponse(serializer.data, status=200)
-        #
-        # return JsonResponse(serializer.errors, status=400)
