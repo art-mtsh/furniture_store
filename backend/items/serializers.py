@@ -84,30 +84,36 @@ class ItemReviewSerializer(serializers.ModelSerializer):
 
 
 class ItemsSerializer(serializers.ModelSerializer):
-
     photo = serializers.SerializerMethodField()
     hard_body = serializers.SerializerMethodField()
     soft_body = serializers.SerializerMethodField()
     review = serializers.SerializerMethodField()
     discount = serializers.SerializerMethodField()
+    item_category = serializers.SerializerMethodField()
     room = serializers.SerializerMethodField()
+    collection = serializers.SerializerMethodField()
+    manufacturer = serializers.SerializerMethodField()
 
     def get_photo(self, obj):
         data = ItemPhotoSerializer(obj.prefetched_photos, many=True).data
         data = [p.get('photo') for p in data]
         return data
+
     def get_hard_body(self, obj):
         data = ItemHardBodySerializer(obj.prefetched_hard_body, many=True).data
         return data
+
     def get_soft_body(self, obj):
         data = ItemSoftBodySerializer(obj.prefetched_soft_body, many=True).data
         return data
+
     def get_review(self, obj):
         data = ItemReviewSerializer(obj.prefetched_reviews, many=True).data
         rate = [d.get('rating') for d in data]
         rate = sum(rate) / len(rate)
         rate = round(rate, 2)
         return rate
+
     def get_discount(self, obj):
         price = obj.price
         data = ItemDiscountSerializer(obj.prefetched_discounts, many=True).data
@@ -120,8 +126,18 @@ class ItemsSerializer(serializers.ModelSerializer):
             discount = price
         return discount
 
+    def get_item_category(self, obj):
+        return obj.item_category.title
+
     def get_room(self, obj):
-        return obj.item_category.room.id
+        return obj.item_category.room.title
+
+    def get_manufacturer(self, obj):
+        return obj.collection.manufacturer.title
+
+    def get_collection(self, obj):
+        return obj.collection.title
+
     class Meta:
         model = Items
         fields = [
@@ -140,13 +156,11 @@ class ItemsSerializer(serializers.ModelSerializer):
             'width',
             'height',
             'form',
-            'item_category',
             'room',
+            'item_category',
+            'manufacturer',
             'collection',
-            'created_at',
-            'is_published',
             'hard_body',
             'soft_body',
             'photo'
         ]
-
