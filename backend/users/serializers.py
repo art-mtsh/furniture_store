@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -70,3 +71,28 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise serializers.ValidationError("290")
 
         return super().validate(attrs)
+
+
+class UserFavoritesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserFavorites
+        fields = ['related_user', 'related_item']
+
+
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='related_user.email', read_only=True)
+    first_name = serializers.CharField(source='related_user.first_name', read_only=True)
+    last_name = serializers.CharField(source='related_user.last_name', read_only=True)
+
+    class Meta:
+        model = UserBio
+        fields = ['email',
+                  'first_name',
+                  'last_name',
+                  'phone',
+                  'birth_date',
+                  'state',
+                  'city',
+                  'post_office'
+                  ]
