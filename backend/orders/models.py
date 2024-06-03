@@ -21,19 +21,18 @@ class OrderTotal(models.Model):
         ordering = ['related_user']
 
 
-class OrderItem(models.Model):
-
-    related_order = models.ForeignKey(OrderTotal, verbose_name='Замовлення', on_delete=models.CASCADE)
+class OrderCart(models.Model):
+    related_user = models.ForeignKey(User, verbose_name='Користувач', on_delete=models.CASCADE)
     related_item = models.ForeignKey(Items, verbose_name='Товар', on_delete=models.CASCADE)
     quantity = models.IntegerField(verbose_name='Код замовлення')
-    soft_item = models.ForeignKey(ItemSoftBody, verbose_name='Оздоблення', on_delete=models.SET_NULL, null=True, blank=True)
-    hard_item = models.ForeignKey(ItemHardBody, verbose_name='Корпус', on_delete=models.SET_NULL, null=True, blank=True)
+    soft_body = models.ForeignKey(ItemSoftBody, verbose_name='Оздоблення', on_delete=models.SET_NULL, null=True, blank=True)
+    hard_body = models.ForeignKey(ItemHardBody, verbose_name='Корпус', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.related_order.username
+        return self.related_user.username
 
     class Meta:
-        db_table = 'order_item'
-        verbose_name = "Товар"
-        verbose_name_plural = "Товари"
-        ordering = ['related_order']
+        db_table = 'order_cart'
+        verbose_name = "Корзина"
+        verbose_name_plural = "Корзина"
+        ordering = ['related_user']

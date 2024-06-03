@@ -106,4 +106,3 @@ class UserFavoritesView(APIView):
             return JsonResponse({'message': f'Favorite with id={related_item_id} is deleted'}, status=204)
         except UserFavorites.DoesNotExist:
             return JsonResponse({'message': f'Favorite with id={related_item_id} not found'}, status=404)
-
