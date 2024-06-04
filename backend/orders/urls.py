@@ -5,8 +5,5 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('cart/', OrderCartView.as_view(), name='cart'),
-    # path('all/', OrderTotalView.as_view(), name='user_orders'),
-    # path('add-item/', OrderTotalView.as_view(), name='add_item'),
-    # path('create-order/', OrderTotalView.as_view(), name='create_order'),
-    # path('auth/', include('rest_framework.urls')),
+    path('all/', OrderTotalView.as_view(), name='user_orders'),
 ]

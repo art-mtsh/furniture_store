@@ -40,9 +40,6 @@ class UserInfoView(APIView):
                 'last_name': user.last_name,
                 "phone": None,
                 "birth_date": None,
-                "state": None,
-                "city": None,
-                "post_office": None
             }
             return JsonResponse(default_data, status=200)
 

@@ -93,7 +93,4 @@ class UserInfoSerializer(serializers.ModelSerializer):
                   'last_name',
                   'phone',
                   'birth_date',
-                  'state',
-                  'city',
-                  'post_office'
                   ]

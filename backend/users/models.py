@@ -14,9 +14,6 @@ class UserBio(models.Model):
     related_user = models.OneToOneField(User, verbose_name='Користувач', on_delete=models.CASCADE, null=True)
     phone = models.CharField(verbose_name='Телефон', max_length=20, validators=[validate_phone_number], null=True)
     birth_date = models.DateField(verbose_name='Дата народження', null=True)
-    state = models.CharField(verbose_name='Область', null=True)
-    city = models.CharField(verbose_name='Місто', null=True)
-    post_office = models.CharField(verbose_name='Відділення НовоїПошти', null=True)
 
     def __str__(self):
         return self.related_user.username

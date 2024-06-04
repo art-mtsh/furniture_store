@@ -11,7 +11,7 @@ from .models import *
 class OrderTotalSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderTotal
-        fields = ['related_user', 'order_number', 'status', 'order_date']
+        fields = '__all__'
 
 
 class SimpleItemSerializer(serializers.ModelSerializer):
@@ -38,9 +38,17 @@ class OrderCartSerializer(serializers.ModelSerializer):
         if obj.soft_body:
             return {
                 'id': obj.soft_body.id,
-                'body_material': obj.soft_body.body_material.id,
-                'facade_material': obj.soft_body.facade_material.id,
-                'tabletop_material': obj.soft_body.tabletop_material.id,
+                'sleep_place': obj.soft_body.sleep_place,
+                'sleep_size': obj.soft_body.sleep_size,
+                'springs_type': obj.soft_body.springs_type,
+                'linen_niche': obj.soft_body.linen_niche,
+                'mechanism': obj.soft_body.mechanism,
+                'filler': obj.soft_body.filler,
+                'counter_claw': obj.soft_body.counter_claw,
+                'armrests': obj.soft_body.armrests,
+                'max_weight': obj.soft_body.max_weight,
+                'upholstery_material': obj.soft_body.upholstery_material.title,
+                'other': obj.soft_body.other,
             }
         return None
 
@@ -48,9 +56,9 @@ class OrderCartSerializer(serializers.ModelSerializer):
         if obj.hard_body:
             return {
                 'id': obj.hard_body.id,
-                'body_material': obj.hard_body.body_material.id,
-                'facade_material': obj.hard_body.facade_material.id,
-                'tabletop_material': obj.hard_body.tabletop_material.id,
+                'body_material': obj.hard_body.body_material.title,
+                'facade_material': obj.hard_body.facade_material.title,
+                'tabletop_material': obj.hard_body.tabletop_material.title,
             }
         return None
 

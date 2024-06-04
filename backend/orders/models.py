@@ -7,9 +7,22 @@ from items.models import *
 
 class OrderTotal(models.Model):
     related_user = models.ForeignKey(User, verbose_name='Користувач', on_delete=models.CASCADE)
-    order_number = models.IntegerField(verbose_name='Код замовлення')
-    status = models.CharField(verbose_name='Статус')
-    order_date = models.DateTimeField(verbose_name='Дата замовлення')
+    phone_number = models.CharField(max_length=20, verbose_name='Телефон', default=0)
+    order_number = models.IntegerField(verbose_name='Код')
+
+    items = models.JSONField(verbose_name='Товари', default=None)
+    order_sum = models.FloatField(verbose_name='Сума', default=None)
+    payment_type = models.CharField(max_length=50, verbose_name='Тип оплати', default='Готівка')
+    promocode = models.CharField(max_length=50, verbose_name='Промокод', blank=True, null=True)
+    status = models.CharField(verbose_name='Статус', default='В обробці')
+
+    area = models.CharField(verbose_name='Тип', default=None)
+    region = models.CharField(verbose_name='Область', default=None)
+    location_type = models.CharField(verbose_name='Тип нп', default=None)
+    location = models.CharField(verbose_name='Нп', default=None)
+    warehouse = models.IntegerField(verbose_name='Склад', default=None)
+
+    order_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата замовлення')
 
     def __str__(self):
         return self.related_user.username
