@@ -127,7 +127,7 @@ class OrderCartView(APIView):
         )
 
         if not user_cart.exists():
-            return JsonResponse({'message': 'Cart is empty'}, status=204)
+            return JsonResponse({'message': 'Cart is empty'}, status=200)
 
         serializer = OrderCartSerializer(user_cart, many=True, context={'request': request})
         return JsonResponse(serializer.data, safe=False, status=200)
