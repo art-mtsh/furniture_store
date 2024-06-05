@@ -29,6 +29,9 @@ class OrderTotalView(APIView):
         user_bio = UserBio.objects.get(related_user=user.id)
         phone_number = user_bio.phone
 
+        if not cart_items:
+            return JsonResponse({'message': 'Cart is empty'}, status=404)
+
         items = {}
         order_sum = 0
         order_number = 0
@@ -76,6 +79,7 @@ class OrderTotalView(APIView):
             order_sum += i.related_item.price * i.quantity
             order_number = 333333 - i.id * 34
 
+        order_sum = round(order_sum, 2)
         payment_type = request.data.get('payment_type', 'готівка')
         promocode = request.data.get('promocode', '')
 
@@ -86,7 +90,7 @@ class OrderTotalView(APIView):
         warehouse = request.data.get('warehouse')
 
         order_data = {
-            'related_user': user.id,  # Pass user id instead of the user object
+            # 'related_user': user.id,  # Pass user id instead of the user object
             'phone_number': phone_number,
             'order_number': order_number,
             'items': items,
@@ -103,6 +107,8 @@ class OrderTotalView(APIView):
 
         serializer = OrderTotalSerializer(data=order_data)
 
+
+
         if serializer.is_valid():
             serializer.save()
             OrderCart.objects.filter(related_user=user).delete()
@@ -110,6 +116,25 @@ class OrderTotalView(APIView):
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
+    def delete(self, request):
+        user = request.user
+        order_id = request.data.get('id')
+
+        if order_id:
+            try:
+                cart = OrderTotal.objects.filter(related_user=user, id=order_id)
+                cart.delete()
+                return JsonResponse({'message': f'Order id={order_id} is deleted'}, status=200)
+            except OrderTotal.DoesNotExist:
+                return JsonResponse({'message': f'Order id={order_id} not found'}, status=404)
+        else:
+            cart_items = OrderTotal.objects.filter(related_user=user)
+
+            if cart_items.exists():
+                cart_items.delete()
+                return JsonResponse({'message': 'All orders are deleted'}, status=200)
+            else:
+                return JsonResponse({'message': 'Orders not found'}, status=200)
 
 class OrderCartView(APIView):
     permission_classes = [IsAuthenticated]
@@ -160,4 +185,4 @@ class OrderCartView(APIView):
                 cart_items.delete()
                 return JsonResponse({'message': 'Cart is cleaned'}, status=200)
             else:
-                return JsonResponse({'message': 'Cart is empty'}, status=204)
+                return JsonResponse({'message': 'Cart is empty'}, status=200)
