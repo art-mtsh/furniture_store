@@ -102,7 +102,8 @@ class OrderTotalView(APIView):
             'region': region,
             'location_type': location_type,
             'location': location,
-            'warehouse': warehouse
+            'warehouse': warehouse,
+            'related_user': user.id
         }
 
         serializer = OrderTotalSerializer(data=order_data)
