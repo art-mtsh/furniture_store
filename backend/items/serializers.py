@@ -53,25 +53,26 @@ class ItemHardBodySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItemHardBody
-        fields = ['body_material', 'facade_material', 'tabletop_material']
+        fields = ['id', 'body_material', 'facade_material', 'tabletop_material']
 
 
 class ItemSoftBodySerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemSoftBody
         # fields = '__all__'
-        fields = ['sleep_place',
-                  'sleep_size',
-                  'springs_type',
-                  'linen_niche',
-                  'mechanism',
-                  'filler',
-                  'counter_claw',
-                  'armrests',
-                  'max_weight',
-                  'upholstery_material',
-                  'other',
-                  ]
+        fields = ['id',
+            'sleep_place',
+            'sleep_size',
+            'springs_type',
+            'linen_niche',
+            'mechanism',
+            'filler',
+            'counter_claw',
+            'armrests',
+            'max_weight',
+            'upholstery_material',
+            'other',
+            ]
 
 
 class ItemDiscountSerializer(serializers.ModelSerializer):
