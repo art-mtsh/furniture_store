@@ -193,3 +193,5 @@ DEFAULT_FILE_STORAGE = 'backend.gcloud.GoogleCloudMediaFileStorage'
 GS_PROJECT_ID = os.getenv('GS_PROJECT_ID')
 GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME')
 MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
+
+

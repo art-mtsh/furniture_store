@@ -14,6 +14,8 @@ ratelimit_m = '10/m'
 
 
 class ItemRoomTypeView(generics.ListCreateAPIView):
+    http_method_names = ['get']
+
     queryset = ItemRoomType.objects.all().order_by('id').prefetch_related('itemcategory_set')
     serializer_class = RoomTypeSerializer
 
@@ -30,6 +32,8 @@ class ItemRoomTypeView(generics.ListCreateAPIView):
 
 
 class ItemCategoryView(generics.ListCreateAPIView):
+    http_method_names = ['get']
+
     serializer_class = ItemCategorySerializer
 
     def get_queryset(self):
