@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from users.models import UserBio
 from django.db.models import Prefetch
 from .serializers import *
+from rest_framework.response import Response
 
 ratelimit_m = '10/m'
 
@@ -38,30 +39,31 @@ class OrderTotalView(APIView):
 
         for i in cart_items:
 
-            if i.soft_body != None:
-                sb_obj = ItemSoftBody.objects.get(id=i.soft_body.id)
+            soft = i.soft_body
+            hard = i.hard_body
+
+            if soft != None:
                 soft_body = {
-                    'sleep_place': sb_obj.sleep_place,
-                    'sleep_size': sb_obj.sleep_size,
-                    'springs_type': sb_obj.springs_type,
-                    'linen_niche': sb_obj.linen_niche,
-                    'mechanism': sb_obj.mechanism,
-                    'filler': sb_obj.filler,
-                    'counter_claw': sb_obj.counter_claw,
-                    'armrests': sb_obj.armrests,
-                    'max_weight': sb_obj.max_weight,
-                    'upholstery_material': sb_obj.upholstery_material.title,
-                    'other': sb_obj.other
+                    'sleep_place': soft.sleep_place if soft.sleep_place != None else '',
+                    'sleep_size': soft.sleep_size if soft.sleep_size != None else '',
+                    'springs_type': soft.springs_type if soft.springs_type != None else '',
+                    'linen_niche': soft.linen_niche if soft.linen_niche != None else '',
+                    'mechanism': soft.mechanism if soft.mechanism != None else '',
+                    'filler': soft.filler if soft.filler != None else '',
+                    'counter_claw': soft.counter_claw if soft.counter_claw != None else '',
+                    'armrests': soft.armrests if soft.armrests != None else '',
+                    'max_weight': soft.max_weight if soft.max_weight != None else '',
+                    # 'upholstery_material': soft.upholstery_material if soft.upholstery_material != None else '',
+                    'other': soft.other if soft.other != None else '',
                 }
             else:
                 soft_body = ''
 
-            if i.hard_body != None:
-                hb_obj = ItemHardBody.objects.get(id=i.hard_body.id)
+            if hard != None:
                 hard_body = {
-                    'body_material': hb_obj.body_material.title,
-                    'facade_material': hb_obj.facade_material.title,
-                    'tabletop_material': hb_obj.tabletop_material.title
+                    'body_material': hard.body_material.title if hard.body_material != None else '',
+                    'facade_material': hard.facade_material.title if hard.facade_material != None else '',
+                    'tabletop_material': hard.tabletop_material.title if hard.tabletop_material != None else ''
                 }
             else:
                 hard_body = ''
@@ -108,8 +110,6 @@ class OrderTotalView(APIView):
 
         serializer = OrderTotalSerializer(data=order_data)
 
-
-
         if serializer.is_valid():
             serializer.save()
             OrderCart.objects.filter(related_user=user).delete()
@@ -137,6 +137,7 @@ class OrderTotalView(APIView):
             else:
                 return JsonResponse({'message': 'Orders not found'}, status=200)
 
+
 class OrderCartView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -144,25 +145,18 @@ class OrderCartView(APIView):
         user = request.user
 
         user_cart = OrderCart.objects.filter(related_user=user).prefetch_related(
-            'photo',
             'hard_body__body_material',
             'hard_body__facade_material',
             'hard_body__tabletop_material',
-            'soft_body',
-            'review',
-            'discount',
-        ).select_related(
-            'item_category',
-            'collection',
-            'item_category__room',
-            'collection__manufacturer'
-        )
+            'hard_body',
+            'soft_body')
 
         if not user_cart.exists():
-            return JsonResponse({'message': 'Cart is empty'}, status=200)
+            return JsonResponse({'message': 'Cart is empty'}, status=404)
 
-        serializer = OrderCartSerializer(user_cart, many=True, context={'request': request})
-        return JsonResponse(serializer.data, safe=False, status=200)
+        cart_ids = OrderCartSerializer(user_cart, many=True, context={'request': request})
+
+        return Response(cart_ids.data, status=200)
 
     def post(self, request):
         user = request.user
@@ -171,7 +165,8 @@ class OrderCartView(APIView):
         serializer = OrderCartCreateSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)  # 201 Created
+
+            return JsonResponse({'Item added to cart': serializer.data}, status=201)  # 201 Created
         return JsonResponse(serializer.errors, status=400)
 
     def delete(self, request):

@@ -2,7 +2,7 @@ from django.db.models import Prefetch
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from requests import Response
+from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.views import APIView
 
@@ -67,7 +67,18 @@ class UserFavoritesView(APIView):
     def get(self, request):
         user = request.user
 
-        user_favorites = UserFavorites.objects.filter(related_user=user).prefetch_related(
+        user_favorites = UserFavorites.objects.filter(related_user=user)
+
+        if not user_favorites.exists():
+            return JsonResponse({'message': 'Favorites not found'}, status=404)
+
+        favs_ids = UserFavoritesSerializer(user_favorites, many=True, context={'request': request})
+        favs_ids = favs_ids.data
+        favs_ids = [i['related_item'] for i in favs_ids]
+
+        queryset = Items.objects.filter(
+            id__in=favs_ids
+        ).prefetch_related(
             'photo',
             'hard_body__body_material',
             'hard_body__facade_material',
@@ -82,21 +93,19 @@ class UserFavoritesView(APIView):
             'collection__manufacturer'
         )
 
-        if not user_favorites.exists():
-            return JsonResponse({'message': 'Favorites not found'}, status=404)
+        serializer = ItemsSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=200)
 
-        items = [favorite.related_item for favorite in user_favorites]
-        serializer = ItemsSerializer(items, many=True, context={'request': request})
-        return JsonResponse(serializer.data, safe=False, status=200)
 
     def post(self, request):
         user = request.user
         data = request.data.copy()
         data['related_user'] = user.id
+        item = data['related_item']
         serializer = UserFavoritesSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             serializer.save(related_user=user)
-            return JsonResponse(serializer.data, status=201)  # 201 Created
+            return JsonResponse({'message': f'Favorite with item id {item} added'}, status=201)  # 201 Created
         return JsonResponse(serializer.errors, status=400)
 
     def delete(self, request):

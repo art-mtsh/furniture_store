@@ -4,7 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from items.serializers import ItemsSerializer
+from items.serializers import ItemsSerializer, ItemSoftBodySerializer, ItemHardBodySerializer
 from .models import *
 
 
@@ -14,6 +14,7 @@ class OrderTotalSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
 class SimpleItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Items
@@ -21,46 +22,45 @@ class SimpleItemSerializer(serializers.ModelSerializer):
 
 class OrderCartSerializer(serializers.ModelSerializer):
     item = serializers.SerializerMethodField()
-    soft_body = serializers.SerializerMethodField()
-    hard_body = serializers.SerializerMethodField()
+    soft_body = ItemSoftBodySerializer()
+    hard_body = ItemHardBodySerializer()
+
 
     class Meta:
         model = OrderCart
         fields = ['id', 'item', 'quantity', 'soft_body', 'hard_body']
-        # read_only_fields = ('related_user',)
-        # order_by = ['item']
 
     def get_item(self, obj):
         data = SimpleItemSerializer(obj.related_item).data
         return data
 
-    def get_soft_body(self, obj):
-        if obj.soft_body:
-            return {
-                'id': obj.soft_body.id,
-                'sleep_place': obj.soft_body.sleep_place,
-                'sleep_size': obj.soft_body.sleep_size,
-                'springs_type': obj.soft_body.springs_type,
-                'linen_niche': obj.soft_body.linen_niche,
-                'mechanism': obj.soft_body.mechanism,
-                'filler': obj.soft_body.filler,
-                'counter_claw': obj.soft_body.counter_claw,
-                'armrests': obj.soft_body.armrests,
-                'max_weight': obj.soft_body.max_weight,
-                'upholstery_material': obj.soft_body.upholstery_material.title,
-                'other': obj.soft_body.other,
-            }
-        return None
-
-    def get_hard_body(self, obj):
-        if obj.hard_body:
-            return {
-                'id': obj.hard_body.id,
-                'body_material': obj.hard_body.body_material.title,
-                'facade_material': obj.hard_body.facade_material.title,
-                'tabletop_material': obj.hard_body.tabletop_material.title,
-            }
-        return None
+    # def get_soft_body(self, obj):
+    #     if obj.soft_body:
+    #         return {
+    #             'id': obj.soft_body.id,
+    #             'sleep_place': obj.soft_body.sleep_place,
+    #             'sleep_size': obj.soft_body.sleep_size,
+    #             'springs_type': obj.soft_body.springs_type,
+    #             'linen_niche': obj.soft_body.linen_niche,
+    #             'mechanism': obj.soft_body.mechanism,
+    #             'filler': obj.soft_body.filler,
+    #             'counter_claw': obj.soft_body.counter_claw,
+    #             'armrests': obj.soft_body.armrests,
+    #             'max_weight': obj.soft_body.max_weight,
+    #             'upholstery_material': obj.soft_body.upholstery_material.title,
+    #             'other': obj.soft_body.other,
+    #         }
+    #     return None
+    #
+    # def get_hard_body(self, obj):
+    #     if obj.hard_body:
+    #         return {
+    #             'id': obj.hard_body.id,
+    #             'body_material': obj.hard_body.body_material,
+    #             'facade_material': obj.hard_body.facade_material,
+    #             'tabletop_material': obj.hard_body.tabletop_material,
+    #         }
+    #     return None
 
 class OrderCartCreateSerializer(serializers.ModelSerializer):
     class Meta:

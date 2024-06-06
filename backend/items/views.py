@@ -52,36 +52,6 @@ class ItemCategoryView(generics.ListCreateAPIView):
         log_engine.error("An error occurred: %s", str(e), exc_info=True)
 
 
-# class ItemsView(generics.ListCreateAPIView):
-#     serializer_class = ItemsSerializer
-#
-#     def get_queryset(self):
-#         cat_id = self.kwargs.get('cat_id')
-#
-#         queryset = Items.objects.all().select_related(
-#             'item_category__room').prefetch_related(
-#             Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
-#             Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
-#             Prefetch('soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
-#             Prefetch('review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
-#             Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
-#
-#         if cat_id is not None:
-#             queryset = queryset.filter(item_category_id=cat_id)
-#         return queryset
-#
-#     try:
-#         @method_decorator(ratelimit(block=False, rate=ratelimit_m))
-#         def dispatch(self, request, *args, **kwargs):
-#             log_engine.info('Request to ItemsView')
-#             if getattr(request, 'limits', {}):
-#                 log_engine.warning('Too many requests for ItemsView')
-#                 return HttpResponse('Too many requests', status=429, content_type='text/plain')
-#             return super().dispatch(request, *args, **kwargs)
-#     except Exception as e:
-#         log_engine.error("An error occurred: %s", str(e), exc_info=True)
-
-
 class ItemsView(APIView):
     def get(self, request, cat_id):
 
