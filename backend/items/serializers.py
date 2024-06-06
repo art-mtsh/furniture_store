@@ -1,7 +1,5 @@
-from django.db.models import Avg
 from rest_framework import serializers
 from .models import *
-import base64
 
 
 class ItemCategorySerializer(serializers.ModelSerializer):
@@ -49,29 +47,31 @@ class ItemMaterialsSerializer(serializers.ModelSerializer):
 
 
 class ItemHardBodySerializer(serializers.ModelSerializer):
+    body_material = ItemMaterialsSerializer()
+    facade_material = ItemMaterialsSerializer()
+    tabletop_material = ItemMaterialsSerializer()
+
     class Meta:
         model = ItemHardBody
-        fields = '__all__'
-        # fields = ['related_item', 'body_material', 'facade_material', 'tabletop_material']
+        fields = ['body_material', 'facade_material', 'tabletop_material']
 
 
 class ItemSoftBodySerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemSoftBody
-        fields = '__all__'
-        # fields = ['related_item',
-        #           'sleep_place',
-        #           'sleep_size',
-        #           'springs_type',
-        #           'linen_niche',
-        #           'mechanism',
-        #           'filler',
-        #           'counter_claw',
-        #           'armrests',
-        #           'max_weight',
-        #           'upholstery_material',
-        #           'other',
-        #           ]
+        # fields = '__all__'
+        fields = ['sleep_place',
+                  'sleep_size',
+                  'springs_type',
+                  'linen_niche',
+                  'mechanism',
+                  'filler',
+                  'counter_claw',
+                  'armrests',
+                  'max_weight',
+                  'upholstery_material',
+                  'other',
+                  ]
 
 
 class ItemDiscountSerializer(serializers.ModelSerializer):
@@ -83,14 +83,15 @@ class ItemDiscountSerializer(serializers.ModelSerializer):
 class ItemReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemReview
-        fields = ['related_item', 'first_name', 'last_name', 'review', 'rating', 'review_usefulness_counter']
+        fields = ['first_name', 'last_name', 'review', 'rating', 'review_usefulness_counter']
 
 
 class ItemsSerializer(serializers.ModelSerializer):
     photo = serializers.SerializerMethodField()
-    hard_body = serializers.SerializerMethodField()
+    hard_body = ItemHardBodySerializer(many=True)
     soft_body = serializers.SerializerMethodField()
-    review = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+    reviews = serializers.SerializerMethodField()
     discount = serializers.SerializerMethodField()
 
     item_category = serializers.SerializerMethodField()
@@ -103,20 +104,20 @@ class ItemsSerializer(serializers.ModelSerializer):
         data = [p.get('photo') for p in data]
         return data
 
-    def get_hard_body(self, obj):
-        data = ItemHardBodySerializer(obj.hard_body, many=True).data
-        return data
-
     def get_soft_body(self, obj):
         data = ItemSoftBodySerializer(obj.soft_body, many=True).data
         return data
 
-    def get_review(self, obj):
+    def get_rating(self, obj):
         data = ItemReviewSerializer(obj.review, many=True).data
         rate = [d.get('rating') for d in data]
         rate = sum(rate) / len(rate)
         rate = round(rate, 2)
         return rate
+
+    def get_reviews(self, obj):
+        data = ItemReviewSerializer(obj.review, many=True).data
+        return data
 
     def get_discount(self, obj):
         price = obj.price
@@ -132,6 +133,7 @@ class ItemsSerializer(serializers.ModelSerializer):
 
     def get_item_category(self, obj):
         return obj.item_category.title
+
     #
     def get_room(self, obj):
         return obj.item_category.room.title
@@ -149,7 +151,8 @@ class ItemsSerializer(serializers.ModelSerializer):
             'title',
             'price',
             'discount',
-            'review',
+            'rating',
+            'reviews',
             'article_code',
             'description',
             'colour',

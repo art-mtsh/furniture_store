@@ -92,10 +92,12 @@ class ItemsView(APIView):
 
         queryset = Items.objects.all().prefetch_related(
             'photo',
-            'hard_body',
+            'hard_body__body_material',
+            'hard_body__facade_material',
+            'hard_body__tabletop_material',
             'soft_body',
             'review',
-            'discount'
+            'discount',
         ).select_related(
             'item_category',
             'collection',
