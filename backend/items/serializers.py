@@ -1,6 +1,7 @@
 from django.db.models import Avg
 from rest_framework import serializers
 from .models import *
+import base64
 
 
 class ItemCategorySerializer(serializers.ModelSerializer):
@@ -91,26 +92,27 @@ class ItemsSerializer(serializers.ModelSerializer):
     soft_body = serializers.SerializerMethodField()
     review = serializers.SerializerMethodField()
     discount = serializers.SerializerMethodField()
+
     item_category = serializers.SerializerMethodField()
     room = serializers.SerializerMethodField()
     collection = serializers.SerializerMethodField()
     manufacturer = serializers.SerializerMethodField()
 
     def get_photo(self, obj):
-        data = ItemPhotoSerializer(obj.prefetched_photos, many=True).data
+        data = ItemPhotoSerializer(obj.photo, many=True).data
         data = [p.get('photo') for p in data]
         return data
 
     def get_hard_body(self, obj):
-        data = ItemHardBodySerializer(obj.prefetched_hard_body, many=True).data
+        data = ItemHardBodySerializer(obj.hard_body, many=True).data
         return data
 
     def get_soft_body(self, obj):
-        data = ItemSoftBodySerializer(obj.prefetched_soft_body, many=True).data
+        data = ItemSoftBodySerializer(obj.soft_body, many=True).data
         return data
 
     def get_review(self, obj):
-        data = ItemReviewSerializer(obj.prefetched_reviews, many=True).data
+        data = ItemReviewSerializer(obj.review, many=True).data
         rate = [d.get('rating') for d in data]
         rate = sum(rate) / len(rate)
         rate = round(rate, 2)
@@ -118,7 +120,7 @@ class ItemsSerializer(serializers.ModelSerializer):
 
     def get_discount(self, obj):
         price = obj.price
-        data = ItemDiscountSerializer(obj.prefetched_discounts, many=True).data
+        data = ItemDiscountSerializer(obj.discount, many=True).data
         if len(data) != 0:
             data = data[0]
             discount_percent = data['discount_percent']
@@ -130,7 +132,7 @@ class ItemsSerializer(serializers.ModelSerializer):
 
     def get_item_category(self, obj):
         return obj.item_category.title
-
+    #
     def get_room(self, obj):
         return obj.item_category.room.title
 
