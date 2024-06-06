@@ -143,13 +143,19 @@ class OrderCartView(APIView):
     def get(self, request):
         user = request.user
 
-        user_cart = OrderCart.objects.filter(related_user=user).select_related('related_item__item_category__room'
-                                                                               ).prefetch_related(
-            Prefetch('related_item__photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
-            Prefetch('related_item__hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
-            Prefetch('related_item__soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
-            Prefetch('related_item__review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
-            Prefetch('related_item__discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts')
+        user_cart = OrderCart.objects.filter(related_user=user).prefetch_related(
+            'photo',
+            'hard_body__body_material',
+            'hard_body__facade_material',
+            'hard_body__tabletop_material',
+            'soft_body',
+            'review',
+            'discount',
+        ).select_related(
+            'item_category',
+            'collection',
+            'item_category__room',
+            'collection__manufacturer'
         )
 
         if not user_cart.exists():
