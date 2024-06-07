@@ -85,9 +85,7 @@ class OrderTotalView(APIView):
         payment_type = request.data.get('payment_type', 'готівка')
         promocode = request.data.get('promocode', '')
 
-        area = request.data.get('area')
         region = request.data.get('region')
-        location_type = request.data.get('location_type')
         location = request.data.get('location')
         warehouse = request.data.get('warehouse')
 
@@ -100,9 +98,7 @@ class OrderTotalView(APIView):
             'payment_type': payment_type,
             'promocode': promocode,
             'status': 'В обробці',
-            'area': area,
             'region': region,
-            'location_type': location_type,
             'location': location,
             'warehouse': warehouse,
             'related_user': user.id

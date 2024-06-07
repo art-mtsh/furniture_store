@@ -16,10 +16,8 @@ class OrderTotal(models.Model):
     promocode = models.CharField(max_length=50, verbose_name='Промокод', blank=True, null=True)
     status = models.CharField(verbose_name='Статус', default='В обробці')
 
-    area = models.CharField(verbose_name='Тип', default=None)
     region = models.CharField(verbose_name='Область', default=None)
-    location_type = models.CharField(verbose_name='Тип нп', default=None)
-    location = models.CharField(verbose_name='Нп', default=None)
+    location = models.CharField(verbose_name='Населений пункт', default=None)
     warehouse = models.IntegerField(verbose_name='Склад', default=None)
 
     order_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата замовлення')
