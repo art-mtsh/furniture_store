@@ -1,9 +1,13 @@
+import os
+
 from django.utils.decorators import method_decorator
 from rest_framework import generics, filters
+
+from . import search_terms
 from .serializers import *
 from brake.decorators import ratelimit
 from sematext import log_engine
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse, HttpResponse, Http404
@@ -101,13 +105,20 @@ class ItemsBestsellersView(generics.ListAPIView):
     serializer_class = ItemsSerializer
 
     def get_queryset(self):
-        queryset = Items.objects.order_by('-sold')[:10].select_related(
-            'item_category__room').prefetch_related(
-            Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
-            Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
-            Prefetch('soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
-            Prefetch('review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
-            Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
+        queryset = Items.objects.order_by('-sold')[:10].prefetch_related(
+            'photo',
+            'hard_body__body_material',
+            'hard_body__facade_material',
+            'hard_body__tabletop_material',
+            'soft_body',
+            'review',
+            'discount',
+        ).select_related(
+            'item_category',
+            'collection',
+            'item_category__room',
+            'collection__manufacturer'
+        )
 
         return queryset
 
@@ -119,22 +130,55 @@ class ItemsSalesView(generics.ListAPIView):
         discount_subquery = ItemDiscount.objects.filter(discount_percent__gte=20).values_list('related_item', flat=True)[:10]
 
         queryset = Items.objects.filter(id__in=discount_subquery).order_by('id').select_related('item_category__room').prefetch_related(
-            Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
-            Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
-            Prefetch('soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
-            Prefetch('review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
-            Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
+            'photo',
+            'hard_body__body_material',
+            'hard_body__facade_material',
+            'hard_body__tabletop_material',
+            'soft_body',
+            'review',
+            'discount',
+        ).select_related(
+            'item_category',
+            'collection',
+            'item_category__room',
+            'collection__manufacturer'
+        )
         return queryset
 
 
+# KEYWORDS = search_terms.ITEMS_SEARCH_KEYWORDS
+
+
+# def generate_keyword_query(keywords_dict):
+#     query = Q()
+#     for room, categories in keywords_dict.items():
+#         for category, keywords in categories.items():
+#             for keyword in keywords:
+#                 query |= (
+#                     Q(title__icontains=keyword) |
+#                     Q(item_category__title__icontains=keyword) |
+#                     Q(article_code__icontains=keyword) |
+#                     Q(collection__title__icontains=keyword) |
+#                     Q(collection__manufacturer__title__icontains=keyword)
+#                 )
+#     return query
+
 class ItemsSearchView(generics.ListAPIView):
-    queryset = Items.objects.all().select_related(
-        'item_category__room').prefetch_related(
-        Prefetch('photo', queryset=ItemPhoto.objects.all(), to_attr='prefetched_photos'),
-        Prefetch('hard_body', queryset=ItemHardBody.objects.all(), to_attr='prefetched_hard_body'),
-        Prefetch('soft_body', queryset=ItemSoftBody.objects.all(), to_attr='prefetched_soft_body'),
-        Prefetch('review', queryset=ItemReview.objects.all(), to_attr='prefetched_reviews'),
-        Prefetch('discount', queryset=ItemDiscount.objects.all(), to_attr='prefetched_discounts'))
+    queryset = Items.objects.all().prefetch_related(
+        'photo',
+        'hard_body__body_material',
+        'hard_body__facade_material',
+        'hard_body__tabletop_material',
+        'soft_body',
+        'review',
+        'discount',
+    ).select_related(
+        'item_category',
+        'collection',
+        'item_category__room',
+        'collection__manufacturer'
+    )
+
     serializer_class = ItemsSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title', 'item_category__title', 'item_category__room__title', 'article_code', 'collection__title', 'collection__manufacturer__title']
+    search_fields = ['title', 'item_category__search_tags', 'article_code', 'collection__title', 'collection__manufacturer__title']

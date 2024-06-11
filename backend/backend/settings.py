@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     'items',
     'users',
     'orders',
-    'debug_toolbar',
+    # 'debug_toolbar',
+    # 'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
+    'drf_yasg',
 ]
 # заголовки для CORS => corsheaders
 # як і MIDDLEWARE corsheaders.middleware.CorsMiddleware:
@@ -64,7 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 INTERNAL_IPS = [
     '127.0.0.1',

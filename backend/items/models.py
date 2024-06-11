@@ -27,6 +27,7 @@ class ItemCategory(models.Model):
 
     title = models.CharField(max_length=150, db_index=True, verbose_name="Категорія")
     room = models.ForeignKey(ItemRoomType, verbose_name='Тип кімнати', on_delete=models.PROTECT)
+    search_tags = models.TextField(verbose_name='Ключові слова', null=True)
 
     def __str__(self):
         return self.title
