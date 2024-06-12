@@ -21,7 +21,7 @@ class UserBio(models.Model):
     class Meta:
         db_table = 'user_bio'
         verbose_name = "Деталі користувача"
-        verbose_name_plural = "Деталі користувача"
+        verbose_name_plural = "Деталі користувачів"
         ordering = ['related_user']
 
 
@@ -34,7 +34,7 @@ class UserFavorites(models.Model):
 
     class Meta:
         db_table = 'user_favorites'
-        verbose_name = "Обране"
-        verbose_name_plural = "Обрані"
+        verbose_name = "Обране користувача"
+        verbose_name_plural = "Обрані користувачів"
         ordering = ['related_user']
         unique_together = ('related_user', 'related_item')

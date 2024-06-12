@@ -45,5 +45,5 @@ class OrderCart(models.Model):
     class Meta:
         db_table = 'order_cart'
         verbose_name = "Корзина"
-        verbose_name_plural = "Корзина"
+        verbose_name_plural = "Корзини"
         ordering = ['related_user']
