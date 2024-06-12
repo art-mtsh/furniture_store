@@ -33,7 +33,7 @@ REST_FRAMEWORK = {
 
 # час життя JWT токена
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=360),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     'items',
     'users',
     'orders',
-    'debug_toolbar',
+    # 'debug_toolbar',
+    # 'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
+    'drf_yasg',
 ]
 # заголовки для CORS => corsheaders
 # як і MIDDLEWARE corsheaders.middleware.CorsMiddleware:
@@ -64,7 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 INTERNAL_IPS = [
     '127.0.0.1',
@@ -193,3 +195,5 @@ DEFAULT_FILE_STORAGE = 'backend.gcloud.GoogleCloudMediaFileStorage'
 GS_PROJECT_ID = os.getenv('GS_PROJECT_ID')
 GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME')
 MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
+
+
