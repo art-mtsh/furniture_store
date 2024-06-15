@@ -94,7 +94,7 @@ class Migration(migrations.Migration):
                 ('article_code', models.IntegerField(unique=True, verbose_name='Артикул')),
                 ('description', models.TextField(blank=True, verbose_name='Опис')),
                 ('colour', models.CharField(blank=True, max_length=150, verbose_name='Колір')),
-                ('avaliability', models.BooleanField(default=True, verbose_name='В наявності')),
+                ('availability', models.BooleanField(default=True, verbose_name='В наявності')),
                 ('in_stock', models.IntegerField(default=1, verbose_name='На складі')),
                 ('length', models.IntegerField(blank=True, verbose_name='Довжина')),
                 ('width', models.IntegerField(blank=True, verbose_name='Висота')),

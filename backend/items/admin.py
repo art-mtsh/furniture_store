@@ -40,7 +40,7 @@ class ItemsAdmin(admin.ModelAdmin):
                     'price',
                     'article_code',
                     'colour',
-                    'avaliability',
+                    'availability',
                     'in_stock',
                     'item_category',
                     'collection',

@@ -85,7 +85,7 @@ class Items(models.Model):
     article_code = models.IntegerField(verbose_name='Артикул', unique=True, blank=False)
     description = models.TextField(blank=True, verbose_name='Опис')
     colour = models.CharField(max_length=150, verbose_name='Колір', blank=True)
-    avaliability = models.BooleanField(verbose_name='В наявності', default=True)
+    availability = models.BooleanField(verbose_name='В наявності', default=True)
     in_stock = models.IntegerField(verbose_name='На складі', default=1)
     sold = models.IntegerField(verbose_name='Продано одиниць', default=0)
 

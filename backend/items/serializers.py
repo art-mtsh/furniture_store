@@ -157,7 +157,7 @@ class ItemsSerializer(serializers.ModelSerializer):
             'article_code',
             'description',
             'colour',
-            'avaliability',
+            'availability',
             'in_stock',
             'sold',
             'length',
