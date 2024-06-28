@@ -14,8 +14,11 @@ class OrderTotalView(APIView):
     serializer_class = OrderTotalSerializer
 
     def get(self, request):
-        user = request.user
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return JsonResponse({'message': 'Authorization header missing'}, status=401)
 
+        user = request.user
         user_total = OrderTotal.objects.filter(related_user=user)
 
         if not user_total.exists():
