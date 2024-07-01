@@ -28,6 +28,10 @@ class OrderTotalView(APIView):
         return JsonResponse(serializer.data, safe=False, status=200)
 
     def post(self, request):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return JsonResponse({'message': 'Authorization header missing'}, status=401)
+
         user = request.user
         cart_items = OrderCart.objects.filter(related_user=user.id)
         user_bio = UserBio.objects.get(related_user=user.id)
@@ -119,6 +123,10 @@ class OrderTotalView(APIView):
     def delete(self, request):
         user = request.user
         order_id = request.data.get('id')
+
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return JsonResponse({'message': 'Authorization header missing'}, status=401)
 
         if order_id:
             try:
