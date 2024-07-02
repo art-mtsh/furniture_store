@@ -101,6 +101,47 @@ class ItemsView(APIView):
     #     log_engine.error("An error occurred: %s", str(e), exc_info=True)
 
 
+class ExactItemsView(APIView):
+    def get(self, request, item_id):
+
+        if item_id is not None:
+            item_exists = Items.objects.filter(id=item_id).exists()
+            if not item_exists:
+                return HttpResponse('Item not found!', status=404, content_type='text/plain')
+
+        queryset = Items.objects.all().prefetch_related(
+            'photo',
+            'hard_body__body_material',
+            'hard_body__facade_material',
+            'hard_body__tabletop_material',
+            'soft_body',
+            'review',
+            'discount',
+        ).select_related(
+            'item_category',
+            'collection',
+            'item_category__room',
+            'collection__manufacturer'
+        )
+
+        if item_id is not None:
+            queryset = queryset.filter(id=item_id)
+
+        serializer = ItemsSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=200)
+
+
+    # try:
+    #     @method_decorator(ratelimit(block=False, rate=ratelimit_m))
+    #     def dispatch(self, request, *args, **kwargs):
+    #         log_engine.info('Request to ItemsView')
+    #         if getattr(request, 'limits', {}):
+    #             log_engine.warning('Too many requests for ItemsView')
+    #             return HttpResponse('Too many requests', status=429, content_type='text/plain')
+    #         return super().dispatch(request, *args, **kwargs)
+    # except Exception as e:
+    #     log_engine.error("An error occurred: %s", str(e), exc_info=True)
+
 class ItemsBestsellersView(generics.ListAPIView):
     serializer_class = ItemsSerializer
 
