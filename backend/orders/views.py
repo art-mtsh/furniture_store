@@ -33,10 +33,21 @@ class OrderTotalView(APIView):
             return JsonResponse({'message': 'Authorization header missing'}, status=401)
 
         user = request.user
-        cart_items = OrderCart.objects.filter(related_user=user.id)
-        user_bio = UserBio.objects.get(related_user=user.id)
-        phone_number = user_bio.phone
+        try:
+            user_bio = UserBio.objects.get(related_user=user.id)
+        except UserBio.DoesNotExist:
+            return Response({"error":
+                                 "Please add phone number for this user! "
+                                 "Use POST to users/info with phone=<phone number> (digits only)"}, status=404)
 
+        if user_bio.phone is None:
+            return Response({"error":
+                                 "Please add phone number for this user! "
+                                 "Use POST to users/info with phone=<phone number> (digits only)"}, status=404)
+        else:
+            phone_number = user_bio.phone
+
+        cart_items = OrderCart.objects.filter(related_user=user.id)
         if not cart_items:
             return JsonResponse({'message': 'Cart is empty'}, status=404)
 
