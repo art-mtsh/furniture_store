@@ -18,17 +18,16 @@ class OrderTotalSerializer(serializers.ModelSerializer):
 class SimpleItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Items
-        fields = ['title', 'price', 'article_code']
+        fields = ['id', 'title', 'price', 'article_code']
 
 class OrderCartSerializer(serializers.ModelSerializer):
     item = serializers.SerializerMethodField()
     soft_body = ItemSoftBodySerializer()
     hard_body = ItemHardBodySerializer()
 
-
     class Meta:
         model = OrderCart
-        fields = ['id', 'item', 'quantity', 'soft_body', 'hard_body']
+        fields = ['item', 'quantity', 'soft_body', 'hard_body']
 
     def get_item(self, obj):
         data = SimpleItemSerializer(obj.related_item).data
