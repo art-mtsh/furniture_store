@@ -180,24 +180,55 @@ class OrderCartView(APIView):
         user = request.user
         data = request.data.copy()
         data['related_user'] = user.id
-        serializer = OrderCartCreateSerializer(data=data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
 
-            return JsonResponse({'Item added to cart': serializer.data}, status=201)  # 201 Created
-        return JsonResponse(serializer.errors, status=400)
+        related_item = data.get('related_item')
+        if not related_item:
+            return JsonResponse({'error': 'related_item is required'}, status=400)
+
+        quantity = data.get('quantity')
+        if not quantity:
+            return JsonResponse({'error': 'quantity is required'}, status=400)
+
+        hard_body = data.get('hard_body', None)
+        soft_body = data.get('soft_body', None)
+
+        # Check if an item with the same related_item, hard_body, and soft_body already exists
+        item_exists = OrderCart.objects.filter(
+            related_user=user,
+            related_item=related_item,
+            hard_body=hard_body,
+            soft_body=soft_body
+        ).first()
+
+        if item_exists:
+            item_exists.quantity += int(quantity)
+            item_exists.save()
+            return JsonResponse({
+                'message': 'Item quantity updated',
+                'item_cart_id': f'{item_exists.id}',
+                'item': OrderCartCreateSerializer(item_exists).data}, status=200)  # 200 OK
+        else:
+            serializer = OrderCartCreateSerializer(data=data, context={'request': request})
+            if serializer.is_valid():
+                new_item = serializer.save()
+                return JsonResponse({
+                    'message': 'Item added to cart',
+                    'item_cart_id': f'{new_item.id}',
+                    'item': serializer.data}, status=201)  # 201 Created
+
+            return JsonResponse(serializer.errors, status=400)
 
     def delete(self, request):
         user = request.user
-        related_item = request.data.get('related_item')
+        item_cart_id = request.data.get('item_cart_id')
 
-        if related_item:
+        if item_cart_id:
             try:
-                cart = OrderCart.objects.get(related_user=user, related_item=related_item)
+                cart = OrderCart.objects.get(related_user=user, id=item_cart_id)
                 cart.delete()
-                return JsonResponse({'message': f'Item id={related_item} is deleted'}, status=200)
+                return JsonResponse({'message': f'item_cart_id={item_cart_id} is deleted'}, status=200)
             except OrderCart.DoesNotExist:
-                return JsonResponse({'message': f'Item with id={related_item} not found'}, status=404)
+                return JsonResponse({'message': f'item_cart_id={item_cart_id} not found'}, status=404)
         else:
             cart_items = OrderCart.objects.filter(related_user=user)
 

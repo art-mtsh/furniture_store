@@ -24,10 +24,11 @@ class OrderCartSerializer(serializers.ModelSerializer):
     item = serializers.SerializerMethodField()
     soft_body = ItemSoftBodySerializer()
     hard_body = ItemHardBodySerializer()
+    item_cart_id = serializers.IntegerField(source='id')
 
     class Meta:
         model = OrderCart
-        fields = ['item', 'quantity', 'soft_body', 'hard_body']
+        fields = ['item_cart_id', 'item', 'quantity', 'soft_body', 'hard_body']
 
     def get_item(self, obj):
         data = SimpleItemSerializer(obj.related_item).data
@@ -62,10 +63,12 @@ class OrderCartSerializer(serializers.ModelSerializer):
     #     return None
 
 class OrderCartCreateSerializer(serializers.ModelSerializer):
+    # item_cart_id = serializers.IntegerField(source='id')
+
     class Meta:
         model = OrderCart
-        fields = ['id', 'related_item', 'quantity', 'soft_body', 'hard_body']
-        # read_only_fields = ('related_user',)
+        fields = ['related_item', 'quantity', 'soft_body', 'hard_body']
+        # read_only_fields = ('item_cart_id',)
 
     def validate(self, data):
         related_item = data.get('related_item')
