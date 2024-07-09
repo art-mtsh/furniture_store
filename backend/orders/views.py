@@ -189,15 +189,15 @@ class OrderCartView(APIView):
 
     def delete(self, request):
         user = request.user
-        related_item_id = request.data.get('id')
+        related_item = request.data.get('related_item')
 
-        if related_item_id:
+        if related_item:
             try:
-                cart = OrderCart.objects.get(related_user=user, id=related_item_id)
+                cart = OrderCart.objects.get(related_user=user, related_item=related_item)
                 cart.delete()
-                return JsonResponse({'message': f'Item id={related_item_id} is deleted'}, status=200)
+                return JsonResponse({'message': f'Item id={related_item} is deleted'}, status=200)
             except OrderCart.DoesNotExist:
-                return JsonResponse({'message': f'Item with id={related_item_id} not found'}, status=404)
+                return JsonResponse({'message': f'Item with id={related_item} not found'}, status=404)
         else:
             cart_items = OrderCart.objects.filter(related_user=user)
 
