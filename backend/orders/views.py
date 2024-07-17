@@ -189,6 +189,9 @@ class OrderCartView(APIView):
         if not quantity:
             return JsonResponse({'error': 'quantity is required'}, status=400)
 
+        if abs(int(quantity)) > 100:
+            return JsonResponse({'error': 'too much items, max=100'}, status=400)
+
         hard_body = data.get('hard_body', None)
         soft_body = data.get('soft_body', None)
 
@@ -201,12 +204,19 @@ class OrderCartView(APIView):
         ).first()
 
         if item_exists:
-            item_exists.quantity += int(quantity)
-            item_exists.save()
-            return JsonResponse({
-                'message': 'Item quantity updated',
-                'item_cart_id': f'{item_exists.id}',
-                'item': OrderCartCreateSerializer(item_exists).data}, status=200)  # 200 OK
+            if item_exists.quantity + int(quantity) > 100:
+                return JsonResponse({'error': 'too much items, max=100'}, status=400)
+            elif item_exists.quantity + int(quantity) < 0:
+                return JsonResponse({'error': 'trying to delete more items than was added'}, status=400)
+            elif item_exists.quantity + int(quantity) == 0:
+                return JsonResponse({'error': 'trying to delete same quantity of items as was added, use DELETE method instead'}, status=400)
+            else:
+                item_exists.quantity += int(quantity)
+                item_exists.save()
+                return JsonResponse({
+                    'message': 'Item quantity updated',
+                    'item_cart_id': f'{item_exists.id}',
+                    'item': OrderCartCreateSerializer(item_exists).data}, status=200)  # 200 OK
         else:
             serializer = OrderCartCreateSerializer(data=data, context={'request': request})
             if serializer.is_valid():
