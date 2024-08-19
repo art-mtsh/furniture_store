@@ -111,11 +111,11 @@ class UserFavoritesView(APIView):
     def delete(self, request):
         user = request.user
         id = request.data.get('related_item')
-        if id == None:
-            return JsonResponse({'message': f'Provide favorite id you want to delete!'}, status=404)
+        if not id:
+            return JsonResponse({'message': f'Provide favorite id you want to delete!'}, status=400)
         try:
             favorite = UserFavorites.objects.get(related_user=user, related_item_id=id)
             favorite.delete()
-            return JsonResponse({'message': f'Favorite with id={id} is deleted'}, status=204)
+            return JsonResponse({'message': f'Favorite with id={id} is deleted'}, status=200)
         except UserFavorites.DoesNotExist:
             return JsonResponse({'message': f'Favorite with id={id} not found'}, status=404)
