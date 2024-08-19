@@ -218,6 +218,8 @@ class OrderCartView(APIView):
                     'item_cart_id': f'{item_exists.id}',
                     'item': OrderCartCreateSerializer(item_exists).data}, status=200)  # 200 OK
         else:
+            if int(quantity) <= 0:
+                return JsonResponse({'error': 'quantity cannot be less or equal to zero'}, status=400)
             serializer = OrderCartCreateSerializer(data=data, context={'request': request})
             if serializer.is_valid():
                 new_item = serializer.save()

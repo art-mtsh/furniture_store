@@ -76,7 +76,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserFavoritesSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserFavorites
-        fields = ['related_user', 'related_item']
+        fields = ['id', 'related_user', 'related_item']
         read_only_fields = ('related_user',)
         order_by = ['related_item']
 

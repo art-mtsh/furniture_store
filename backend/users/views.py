@@ -110,7 +110,7 @@ class UserFavoritesView(APIView):
 
     def delete(self, request):
         user = request.user
-        id = request.data.get('id')
+        id = request.data.get('related_item')
         if id == None:
             return JsonResponse({'message': f'Provide favorite id you want to delete!'}, status=404)
         try:
