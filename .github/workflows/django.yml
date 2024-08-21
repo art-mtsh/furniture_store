@@ -94,19 +94,19 @@ jobs:
       - name: List files in repository
         run: ls -al
 
+      - name: Upload SSL Certificates to EC2
+        run: |
+          echo "${{ secrets.SSL_CERTIFICATE }}" > fullchain.pem
+          echo "${{ secrets.SSL_KEY }}" > privkey.pem
+          scp -i path/to/your/key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./fullchain.pem ec2-user@your-ec2-public-dns:/path/to/certs/
+          scp -i path/to/your/key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./privkey.pem ec2-user@your-ec2-public-dns:/path/to/certs/
+
       - name: Stop and remove containers and images (if any)
         run: |
           docker stop $(docker ps -a -q) || true
           docker remove $(docker ps -a -q) || true
           docker rmi -f $(docker images -aq) || true
         continue-on-error: true
-
-
-#      - name: Pull latest image from Docker Hub
-#        run: docker pull artmtsh/store_backend:latest
-#
-#      - name: Run new container
-#        run: docker run -d -p 8000:8000 --name store_backend_container artmtsh/store_backend:latest
 
       - name: Build Django container
         run: |
@@ -131,3 +131,7 @@ jobs:
           -v $(pwd)/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro \
           -v $(pwd)/privkey.pem:/etc/ssl/private/privkey.pem:ro \
           store_nginx:latest
+
+      - name: Restart Nginx
+        run: |
+          ssh -i path/to/your/key.pem ec2-user@your-ec2-public-dns "sudo systemctl restart nginx"
