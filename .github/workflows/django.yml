@@ -118,7 +118,7 @@ jobs:
 
       - name: Copy SSL certificates to system
         run: |
-          echo "${{ secrets.SSL_CERT }}" | sudo tee /etc/ssl/certs/fullchain.pem > /dev/null
+          echo "${{ secrets.SSL_CERTIFICATE }}" | sudo tee /etc/ssl/certs/fullchain.pem > /dev/null
           echo "${{ secrets.SSL_KEY }}" | sudo tee /etc/ssl/private/privkey.pem > /dev/null
 
       - name: Run Nginx container
